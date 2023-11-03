@@ -10,24 +10,22 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String[] words = br.readLine().split("");
-        Stack<String> stack = new Stack<>();
+        char[] words = br.readLine().toCharArray();
+        Stack<Character> stack = new Stack<>();
         StringBuilder sb = new StringBuilder();
         boolean isopen = false;
-        for (String word : words) {
-            if (word.equals("<")) {
+        for (char word : words) {
+            if (word == '<') {
                 flush(sb,stack);
                 isopen = true;
-                sb.append(word);
-                continue;
-            } else if (word.equals(">")) {
+            } else if (word == '>') {
                 sb.append(">");
                 isopen = false;
                 continue;
             }
             // 닫혀있다면
             if (!isopen) {
-                if (word.equals(" ")) {
+                if (word == ' ') {
                     flush(sb,stack);
                     sb.append(" ");
                 } else {
@@ -41,7 +39,7 @@ public class Main {
 
         System.out.println(sb.toString());
     }
-    public static void flush(StringBuilder sb,Stack<String> stack){
+    public static void flush(StringBuilder sb,Stack<Character> stack){
         while (!stack.isEmpty()) {
             sb.append(stack.pop());
         }
