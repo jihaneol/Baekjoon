@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,13 +25,13 @@ public class Main {
             int temp = tap[i];
             if(!used[temp]) { // 사용안하는 중
                 if(put<N){
-                    used[temp]=true;// 콘서트가 꽃을 공간이 있는경우
                     put++;
 
                 }else { // 꽃을 공간이 없다.
                     find(i, temp);
                 }
             }
+            used[temp] = true;
         }
         System.out.println(answer);
     }
@@ -57,7 +56,7 @@ public class Main {
                 }
             }
         }
-        used[num] = true;
+      
         answer++;
     }
 }
