@@ -1,5 +1,4 @@
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,7 +40,7 @@ public class Main {
         boolean[] temp = new boolean[101]; //현재 꽃힌 콘센트 중에 나중에 사용되는지 확인용
         int c = 0;
         int later_product = 0;
-        for(int i=idx; i<M; i++) {
+        for(int i=idx+1; i<M; i++) {
             if (used[tap[i]] && !temp[tap[i]]) {
                 temp[tap[i]]=true;
                 later_product = tap[i];
