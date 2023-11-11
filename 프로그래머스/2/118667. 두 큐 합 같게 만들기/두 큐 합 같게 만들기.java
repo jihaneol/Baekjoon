@@ -16,25 +16,25 @@ class Solution {
         }
         long target = (q1_sum+q2_sum)/2;
         while(q1_sum != q2_sum){
-            if(answer > (queue1.length+queue2.length)*2)
+            if(answer >600000)
             {
                 return -1;
             }
-            if(q1_sum<target)
+            while(q1_sum<target)
             {
                 q1_sum+=q2.peek();
                 q2_sum-=q2.peek();
                 q1.add(q2.poll());
                 answer++;
             }
-            else if(q2_sum<target)
+            while(q2_sum<target)
             {
                 q2_sum+=q1.peek();
                 q1_sum-=q1.peek();
                 q2.add(q1.poll());
                 answer++;
             }
-            else
+            if(q1_sum == q2_sum)
             {
                 return answer;
             }
