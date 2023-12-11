@@ -21,35 +21,29 @@ public class Main {
             map[i] = br.readLine().toCharArray();
         }
         for(int i=0; i<N; i++){
-            map[i][0] = 'x';
-            flag = false;
-            connect(i, 0,0);
+
+            if(connect(i, 0,0)) ans++;
         }
 
         System.out.println(ans);
 
     }
 
-    private static void connect(int x, int y,int end) {
+    private static boolean connect(int x, int y,int end) {
+        map[x][y] = 'x';
         int[] dx = {-1 ,0 ,1};
         int[] dy = { 1 ,1 ,1};
         if(end == M-1){
-            ans++;
-            map[x][y] = 'x';
-            flag = true; //연결되었다.
-            return;
+            return true;
         }
         for(int i=0; i<3; i++){
             int nx = dx[i] +x;
             int ny = dy[i] +y;
-            if(isRange(nx,ny) && map[nx][ny] == '.'){
-                map[nx][ny] = 'x';
-                connect(nx,ny,end+1);
-                if(flag) return;
+            if(isRange(nx,ny) && map[nx][ny] == '.' && connect(nx,ny,end+1)){
+                return true;
             }
         }
-
-
+        return false;
     }
 
     private static boolean isRange(int nx, int ny) {
