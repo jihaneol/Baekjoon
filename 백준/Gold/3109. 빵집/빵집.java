@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.*;
 
@@ -45,9 +44,8 @@ public class Main {
         return false;
     }
 
-    private static boolean isRange(int nx, int ny) {
-        if(nx>=0 && ny>=0 && nx<N && ny<M) return true;
-        return false;
+       private static boolean isRange(int nx, int ny) {
+        return nx>=0 && ny>=0 && nx<N && ny<M;
     }
 
 
