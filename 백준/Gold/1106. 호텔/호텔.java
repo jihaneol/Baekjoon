@@ -1,46 +1,80 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.StringTokenizer;
-
 public class Main {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 
-		// 입력
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		int c = Integer.parseInt(st.nextToken());
-		int n = Integer.parseInt(st.nextToken());
-		
-		// 각 도시에서 비용으로 얻을 수 있는 고객수는 100명 이하
-		// 적어도 C명을 늘여야하므로 그보다 더 큰 고객을 들였을 때의 비용이 더 작을 수 있음
-		int dp[] = new int[c+100]; 
-		Arrays.fill(dp, Integer.MAX_VALUE);
-		dp[0] = 0;
-		
-		for(int i=0; i<n; i++) {
+		int C = Integer.valueOf(st.nextToken());
+		int N = Integer.valueOf(st.nextToken());
+		int dp[] = new int[C+100]; //비용
+		Arrays.fill(dp,1002*100);
+		List<int[]> cities = new ArrayList<>(); // 0 비용, 1 고객
+		for(int i=0; i<N; i++){
 			st = new StringTokenizer(br.readLine());
-			int cost = Integer.parseInt(st.nextToken());
-			int customer = Integer.parseInt(st.nextToken());
-			
-			for(int j=customer; j<c+100; j++) {
-				// 돈에 정수배 만큼 투자할 수 있으므로
-				// cost(현재 비용) + dp[j-customer] 로 j명의 고객을 늘린다.
-				if (dp[j-customer] != Integer.MAX_VALUE) // 무한이라면 아직 갱신되지 않은 값이므로 고객을 확보할 수 없다
-					dp[j] = Math.min(dp[j], cost+dp[j-customer]);
+			int cost = Integer.valueOf(st.nextToken());
+			int person = Integer.valueOf(st.nextToken());
+			// 이 부분 추가
+			if(dp[person]!=1002*100) dp[person] = Math.min(dp[person],cost);
+			else dp[person] = cost;
+			cities.add(new int[] {cost,person});
+		}
+		// 고객
+		for(int i=1; i<=C; i++){
+			for(int[] city : cities){
+				if(dp[i] ==1002*100) continue;
+				dp[city[1]+i] = Math.min(dp[city[1]+i],city[0]+dp[i]);
 			}
 		}
-		
-		int answer = Integer.MAX_VALUE;
-		for(int i=c; i<c+100; i++) {// 최소 c명을 확보해야 하므로 dp[c]부터 탐색
-			answer = Math.min(answer, dp[i]);
+		int min = 1002*100;
+		for(int i=C; i<C+100; i++){
+			min = Math.min(min,dp[i]);
 		}
-		System.out.println(answer);
-		
-	}
+		System.out.println(min);
 
+	}
 }
+/**
+ import java.io.*;
+ import java.util.*;
+ public class Main {
+
+ 	public static void main(String[] args) throws Exception {
+
+		 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		 StringTokenizer st = new StringTokenizer(br.readLine());
+		 int C = Integer.valueOf(st.nextToken());
+		 int N = Integer.valueOf(st.nextToken());
+		 int dp[] = new int[1001]; //비용
+		 Arrays.fill(dp,1002*100);
+		 List<int[]> cities = new ArrayList<>(); // 0 비용, 1 고객
+		 for(int i=0; i<N; i++){
+			 st = new StringTokenizer(br.readLine());
+			 int cost = Integer.valueOf(st.nextToken());
+			 int person = Integer.valueOf(st.nextToken());
+			 if(dp[person]!=1002*100) dp[person] = Math.min(dp[person],cost);
+			 else dp[person] = cost;
+			 cities.add(new int[] {cost,person});
+		 }
+		 // 고객
+		 for(int i=1; i<=C; i++){
+		 	for(int[] city : cities){
+		 	if(dp[i] ==1002*100) continue;
+
+             if(city[1]+i>C){
+			 	dp[C] = Math.min(dp[C],city[0]+dp[i]);
+			 }else{
+			 	dp[city[1]+i] = Math.min(dp[city[1]+i],city[0]+dp[i]);
+			 }
+		 	}
+		 }
+		 System.out.println(dp[C]);
+ 	}
+ }
+
+ */
