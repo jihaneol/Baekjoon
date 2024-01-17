@@ -1,4 +1,5 @@
 
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -33,16 +34,19 @@ public class Main {
         }
 
         int answer = 0;
-
+        Deque<Point> union = new ArrayDeque<>();
         while(true) {
             visited = new boolean[N][N];
             boolean flag = true;
             for (int i = 0; i < N; i++) {
                 for (int j = i % 2; j < N; j = j + 2) {
                     if (visited[i][j]) continue;
-                    Deque<Point> union = new ArrayDeque<>();
+
                     int total = move(i, j, visited, union);
-                    if (union.size() ==1) continue;
+                    if (union.size() ==1) {
+                        union.pop();
+                        continue;
+                    }
                     flag = false;
                     int totalNum = total / union.size();
 
@@ -51,9 +55,6 @@ public class Main {
                         map[p.x][p.y] = totalNum;
                     }
 
-//            for(Point p : union){
-//                map[p.x][p.y] = totalNum;
-//            }
 
                 }
             }
