@@ -1,5 +1,4 @@
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -8,6 +7,8 @@ public class Main {
 
     private static int L,R,N;
     private static int[][] map;
+    private static int[] dx = {0,0,1,-1};
+    private static int[] dy = {1,-1,0,0};
     private static class Point{
         int x,y;
         Point(int x, int y){
@@ -66,8 +67,7 @@ public class Main {
 
     }
     private static int move(int row, int col, boolean[][] visited, Deque<Point> union){
-        int[] dx = {0,0,1,-1};
-        int[] dy = {1,-1,0,0};
+  
         int total = map[row][col];
         visited[row][col] = true;
         Deque<Point> q = new ArrayDeque<>();
