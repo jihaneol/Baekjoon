@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -37,8 +36,8 @@ public class Main {
         }
 
         int answer = 0;
-        Queue<Point> union = new ArrayDeque<>();
-        Queue<Point> q = new ArrayDeque<>();
+        Deque<Point> union = new ArrayDeque<>();
+        Deque<Point> q = new ArrayDeque<>();
         while(true) {
             visited = new boolean[N][N];
             boolean flag = true;
@@ -70,7 +69,7 @@ public class Main {
         System.out.println(answer);
 
     }
-    private static int move(int row, int col, Queue<Point> union,Queue<Point> q){
+    private static int move(int row, int col, Deque<Point> union,Deque<Point> q){
 
         int total = map[row][col];
         visited[row][col] = true;
