@@ -37,8 +37,8 @@ public class Main {
         }
 
         int answer = 0;
-        Queue<Point> union = new LinkedList<>();
-        Queue<Point> q = new LinkedList<>();
+        Queue<Point> union = new ArrayDeque<>();
+        Queue<Point> q = new ArrayDeque<>();
         while(true) {
             visited = new boolean[N][N];
             boolean flag = true;
