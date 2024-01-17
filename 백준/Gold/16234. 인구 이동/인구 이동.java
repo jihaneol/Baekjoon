@@ -26,7 +26,7 @@ public class Main {
         L = Integer.valueOf(st.nextToken());
         R = Integer.valueOf(st.nextToken());
         map = new int[N][N];
-        boolean[][] visited = null;
+        boolean[][] visited = new boolean[N][N];
         for(int i=0; i<N; i++){
             st = new StringTokenizer(br.readLine());
             for(int j=0; j<N; j++){
@@ -35,24 +35,28 @@ public class Main {
         }
 
         int answer = 0;
-        Deque<Point> union = new ArrayDeque<>();
+        Queue<Point> union = new LinkedList<>();
+        Queue<Point> q = new LinkedList<>();
         while(true) {
-            visited = new boolean[N][N];
+            for(int i=0; i<N; i++){
+                Arrays.fill(visited[i],false);
+            }
             boolean flag = true;
             for (int i = 0; i < N; i++) {
                 for (int j = i % 2; j < N; j = j + 2) {
                     if (visited[i][j]) continue;
 
-                    int total = move(i, j, visited, union);
+                    int total = move(i, j, visited, union,q);
                     if (union.size() ==1) {
-                        union.pop();
+                        
+                        union.poll();
                         continue;
                     }
                     flag = false;
                     int totalNum = total / union.size();
 
                     while (!union.isEmpty()) {
-                        Point p = union.pop();
+                        Point p = union.poll();
                         map[p.x][p.y] = totalNum;
                     }
 
@@ -66,15 +70,14 @@ public class Main {
         System.out.println(answer);
 
     }
-    private static int move(int row, int col, boolean[][] visited, Deque<Point> union){
-  
+    private static int move(int row, int col, boolean[][] visited, Queue<Point> union,Queue<Point> q){
+
         int total = map[row][col];
         visited[row][col] = true;
-        Deque<Point> q = new ArrayDeque<>();
         q.add(new Point(row,col));
 
         while(!q.isEmpty()){
-            Point now = q.pop();
+            Point now = q.poll();
             union.add(now);
             for(int i=0 ; i<4; i++){
                 int nx = now.x + dx[i];
@@ -99,4 +102,5 @@ public class Main {
 
 
 }
+
 
