@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,19 +27,24 @@ public class Main {
                 map[i][j][2] = 'O';
             }
         }
-       nextBoom(0,1);
-       nextBoom(1,2);
+       
+       
         if(n==1){
             print(sb,0);
         }else{
             int answer = n%4==1 ? 2: n%4==3 ? 1 : 0;
             if(answer == 0) {
                printFullBoom(sb);
+            }else if(answer ==1 ){
+                nextBoom(0,1);
+                print(sb,answer);
             }else{
+                nextBoom(0,1);
+                nextBoom(1,2);
                 print(sb,answer);
             }
         }
-        
+
     }
     public static void printFullBoom(StringBuilder sb){
         for(int i=0; i<r; i++){
@@ -79,5 +83,3 @@ public class Main {
         }
     }
 }
-
-
