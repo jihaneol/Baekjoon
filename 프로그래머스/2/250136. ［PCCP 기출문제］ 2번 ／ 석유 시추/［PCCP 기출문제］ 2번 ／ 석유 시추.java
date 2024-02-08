@@ -1,108 +1,74 @@
 import java.util.*;
-
 class Solution {
-
-    boolean[][] visited;
-
-    Map<Integer, Integer> groupSize = new HashMap<>();
-
-    Group[][] groups;
-
-    int index = 0;
-
-    int[] dx = {1,-1,0,0};
-    int[] dy = {0,0,1,-1};
-
-    int n;
-    int m;
-    int[][] land;
-
+    public int key;
+    public int n,m;
+    public Map<Integer,Integer> map;
+    public int[][] dir = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+    public boolean[][] visited;
+    
     public int solution(int[][] land) {
         int answer = 0;
-
-        this.n = land.length;
-        this.m = land[0].length;
-        this.land = land;
-
-        groups = new Group[n][m];
+        key = 2;
+        map = new HashMap();
+        n = land.length;
+        m = land[0].length;
         visited = new boolean[n][m];
-
-        LinkedList<Integer[]> queue = new LinkedList<>();
-
-        for(int i = 0; i<land.length; i++){
-            for(int j = 0 ; j<land[0].length; j++){
-                if(land[i][j] != 0 && !visited[i][j]){
-                    visited[i][j] = true;
-                    queue.add(new Integer[]{i,j});
-                    Group group = new Group(index);
-                    index++;
-                    groups[i][j] = group;
-                    setGroup(queue, group);
-                }
-            }
+        for(int i=0; i<m; i++){
+            int oil = getOil(i, land);
+            answer = Math.max(answer,oil);
         }
-
-        for(int i = 0; i<m; i++){
-            answer = Math.max(getGroup(i), answer);
-        }
-
+       
         return answer;
     }
-
-    void setGroup(LinkedList<Integer[]> queue, Group group){        
-        int size = 1;
-
-        while(!queue.isEmpty()){
-            Integer[] cur = queue.poll();
-            for(int i = 0 ; i<4; i++){
-                int nextR = cur[0] + dy[i];
-                int nextC = cur[1] + dx[i];
-                if(
-                    isPossible(nextR, nextC) &&
-                    !visited[nextR][nextC] &&
-                    land[cur[0]][cur[1]] == land[nextR][nextC]
-                  ){
-                    visited[nextR][nextC] = true;
-                    groups[nextR][nextC] = group;
-                    size++;
-                    queue.add(new Integer[]{nextR, nextC});
+    
+    public int getOil(int start, int[][] land){
+        boolean[] visitedKey = new boolean[100000];
+        int oilTotal = 0;
+        int a = n*m;
+        for(int r=0; r<n; r++){
+            int nowKey = land[r][start];
+            if(nowKey!=0){
+                if(visitedKey[nowKey]) continue;
+                
+                if(map.containsKey(nowKey)){
+                    oilTotal+=map.get(nowKey);
+                    visitedKey[nowKey] = true;
+                }else{
+                    int oilAmount=bfs(key, r, start, land); //bfs 탐색
+                    map.put(key,oilAmount);
+                    oilTotal+=oilAmount;
+                    visitedKey[key++] = true;
                 }
             }
         }
-
-        groupSize.put(group.index, size);
+        
+        return oilTotal;
     }
-
-    boolean isPossible(int r, int c){
-        if(r<0 || c<0 || r>=n || c>=m){
-            return false;
-        }
-        return true;
-    }
-
-    int getGroup(int col){
-        int sum = 0;
-
-        Set<Integer> set = new HashSet<>();
-
-        for(int i = 0; i<n; i++){
-            if(land[i][col]!=0){
-                set.add(groups[i][col].index);
+    
+    public int bfs(int key,int x, int y,int[][] land){
+        Deque<int[]> q = new ArrayDeque();
+        q.add(new int[] {x,y});
+        visited[x][y] = true;
+        land[x][y] = key;
+        int result = 1;
+        
+        while(!q.isEmpty()){
+            int[] now = q.poll();
+            for(int i=0; i<4; i++){
+                int nx = now[0] + dir[i][0];
+                int ny = now[1] + dir[i][1];
+                
+                if(isRange(nx,ny) || visited[nx][ny] || land[nx][ny]==0) continue;
+                result++;
+                land[nx][ny] = key;
+                q.add(new int[]{nx,ny});
+                visited[nx][ny] = true;
             }
         }
-
-        for(Integer index : set){
-            sum += groupSize.get(index);
-        }
-
-        return sum;
+        return result;
     }
-}
-
-class Group{
-    int index;
-
-    Group(int index){
-        this.index = index;
+    
+    public boolean isRange(int x, int y){
+        return x<0 || y<0 || x>=n || y>=m;
     }
 }
