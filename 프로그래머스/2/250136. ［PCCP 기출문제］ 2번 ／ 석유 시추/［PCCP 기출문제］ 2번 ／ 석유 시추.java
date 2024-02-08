@@ -5,7 +5,7 @@ class Solution {
     public Map<Integer,Integer> map;
     public int[][] dir = {{0,1}, {1,0}, {0,-1}, {-1,0}};
     public boolean[][] visited;
-    
+    public boolean[][] visitedKey;
     public int solution(int[][] land) {
         int answer = 0;
         key = 2;
@@ -13,6 +13,7 @@ class Solution {
         n = land.length;
         m = land[0].length;
         visited = new boolean[n][m];
+        visitedKey = new boolean[n][m];
         for(int i=0; i<m; i++){
             int oil = getOil(i, land);
             answer = Math.max(answer,oil);
@@ -22,22 +23,23 @@ class Solution {
     }
     
     public int getOil(int start, int[][] land){
-        boolean[] visitedKey = new boolean[100000];
+        
         int oilTotal = 0;
         for(int r=0; r<n; r++){
             int nowKey = land[r][start];
             if(nowKey!=0){
-                if(visitedKey[nowKey]) continue;
+                if(visitedKey[r][start]) continue;
                 
                 if(map.containsKey(nowKey)){
                     oilTotal+=map.get(nowKey);
-                    visitedKey[nowKey] = true;
+                    Y(r,start,nowKey,land);
                 }else{
                     int oilAmount=bfs(key, r, start, land); //bfs 탐색
                     map.put(key,oilAmount);
                     oilTotal+=oilAmount;
-                    visitedKey[key++] = true;
+                    Y(r,start,key++,land);
                 }
+                
             }
         }
         
@@ -65,6 +67,14 @@ class Solution {
             }
         }
         return result;
+    }
+    
+    public void Y(int x, int y, int k,int[][] land){
+        for(int i=x; i<n; i++){
+            if(land[i][y]==k){
+                visitedKey[i][y] = true;
+            }
+        }
     }
     
     public boolean isRange(int x, int y){
