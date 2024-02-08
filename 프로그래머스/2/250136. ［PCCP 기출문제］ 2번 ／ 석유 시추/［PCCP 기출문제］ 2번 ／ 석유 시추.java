@@ -24,7 +24,6 @@ class Solution {
     public int getOil(int start, int[][] land){
         boolean[] visitedKey = new boolean[100000];
         int oilTotal = 0;
-        int a = n*m;
         for(int r=0; r<n; r++){
             int nowKey = land[r][start];
             if(nowKey!=0){
