@@ -54,6 +54,8 @@ public class Main {
                     answer++;
                     countMap[nx][ny] = true;
                 }
+                if(map[nx][ny]==9) break;
+                
                 if(map[nx][ny]==0){
                     nx += dir[d][0];
                     ny += dir[d][1];

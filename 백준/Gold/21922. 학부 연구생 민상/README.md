@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 253524 KB, 시간: 2724 ms
+메모리: 253616 KB, 시간: 768 ms
 
 ### 분류
 
@@ -12,7 +12,7 @@
 
 ### 제출 일자
 
-2024년 2월 14일 10:43:44
+2024년 2월 14일 17:02:02
 
 ### 문제 설명
 
@@ -35,26 +35,26 @@
 		</tr>
 		<tr>
 			<td style="text-align: center;">물건 1</td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/fc51a710-aba3-495e-9633-7f2f99a05311/-/crop/743x727/586,188/-/preview/" style="height: 165px; width: 169px;"></td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/a17fba2d-62cb-436f-b832-8d7215d52ea2/-/crop/542x380/689,350/-/preview/" style="height: 140px; width: 200px;"></td>
+			<td style="text-align: center;"><img alt="" src="" style="height: 165px; width: 169px;"></td>
+			<td style="text-align: center;"><img alt="" src="" style="height: 140px; width: 200px;"></td>
 		</tr>
 		<tr>
 			<td style="text-align: center;">물건 2</td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/50cf291b-eee5-48f1-98e3-44cfd9bf8bb0/-/crop/712x666/604,208/-/preview/" style="height: 158px; width: 169px;"><br>
+			<td style="text-align: center;"><img alt="" src="" style="height: 158px; width: 169px;"><br>
 			 </td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/a8e6d8d9-f329-404e-882e-28c916757cdf/-/crop/357x453/785,317/-/preview/" style="width: 158px; height: 200px;"></td>
+			<td style="text-align: center;"><img alt="" src="" style="width: 158px; height: 200px;"></td>
 		</tr>
 		<tr>
 			<td style="text-align: center;">물건 3</td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/a182264f-02ee-4881-941f-fd9888dd1282/-/crop/821x1080/551,0/-/preview/" style="height: 185px; width: 141px;"></td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/c0be3b8b-3c46-4fd5-97de-1702b9bac229/-/crop/695x820/614,125/-/preview/" style="height: 236px; width: 200px;"></td>
+			<td style="text-align: center;"><img alt="" src="" style="height: 185px; width: 141px;"></td>
+			<td style="text-align: center;"><img alt="" src="" style="height: 236px; width: 200px;"></td>
 		</tr>
 		<tr>
 			<td style="text-align: center;">물건 4</td>
 			<td style="text-align: center;">
-			<p><img alt="" src="https://upload.acmicpc.net/9de8a3b6-6d09-4298-98a6-da28a4fd6e30/-/crop/712x1080/599,0/-/preview/" style="height: 185px; width: 122px;"></p>
+			<p><img alt="" src="" style="height: 185px; width: 122px;"></p>
 			</td>
-			<td style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/55a653da-8200-4d00-9d2a-9d698d4794a0/-/crop/821x691/551,198/-/preview/" style="width: 250px; height: 210px;"></td>
+			<td style="text-align: center;"><img alt="" src="" style="width: 250px; height: 210px;"></td>
 		</tr>
 	</tbody>
 </table>
