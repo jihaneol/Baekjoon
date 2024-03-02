@@ -6,8 +6,8 @@ public class Main {
     static int[][] map, A;
     static int N, M, K;
 
-    static Deque<Tree> deathtree, temptree;
-    static PriorityQueue<Tree> livetree;
+    static Deque<Tree> deathtree, temptree, livetree;
+
 
     static class Tree {
         int x, y, age;
@@ -30,9 +30,8 @@ public class Main {
 
         deathtree = new ArrayDeque<>();
         temptree = new ArrayDeque<>();
-        livetree = new PriorityQueue<>((a, b) -> {
-            return Integer.compare(a.age, b.age);
-        });
+        livetree = new ArrayDeque<>();
+
 
         for (int i = 1; i <= N; i++) {
             st = new StringTokenizer(br.readLine());
@@ -50,6 +49,7 @@ public class Main {
 
             livetree.add(new Tree(x, y, z));
         }
+
         int[][] dir = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 0}, {-1, 1}, {-1, -1}};
         while (K-- > 0) {
             //봄
@@ -79,7 +79,7 @@ public class Main {
 
                         if (nx <= 0 || ny <= 0 || nx > N || ny > N) continue;
 
-                        livetree.add(new Tree(nx, ny, 1));
+                        livetree.addFirst(new Tree(nx, ny, 1));
                     }
                 }
                 livetree.add(now);
@@ -92,6 +92,6 @@ public class Main {
             }
         }
 
-        System.out.println(livetree.size() + temptree.size());
+        System.out.println(livetree.size());
     }
 }
