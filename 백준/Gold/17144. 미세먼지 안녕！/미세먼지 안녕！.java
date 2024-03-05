@@ -22,14 +22,6 @@ public class Main {
 
     }
 
-    static Queue<Dust> q;
-
-    /**
-     *
-     * 공기 청정기 길 미리 개통하기 ㄷㄷ
-     * @param args
-     * @throws IOException
-     */
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -38,7 +30,6 @@ public class Main {
         C = Integer.parseInt(st.nextToken());
         T = Integer.parseInt(st.nextToken());
         total=2;
-        q = new LinkedList<>();
         int[][] air = new int[2][2];
         int x =0;
         map = new int[R][C];
@@ -107,27 +98,26 @@ public class Main {
         }
     }
     private static void spreadDust() {
-        // 미세먼지 수거
-        for(int i=0,x=0; i<R; i++){
-            for(int j=0; j<C; j++){
-                if(map[i][j]>=5){
-                    q.add(new Dust(i, j,map[i][j]));
-                }
-            }
-        }
+        // map 복사
+        int[][] tempmap = new int[R][C];
+        for(int i=0; i<R; i++)
+            tempmap[i] = map[i].clone();
         // 미세 먼지 확산
-        while(!q.isEmpty()){
-            Dust now = q.poll();
-            int count = 0;
-            for(int i=0; i<4; i++){
-                int nx = now.x+dir[i][0];
-                int ny = now.y+dir[i][1];
-                if(!isRange(nx,ny) || map[nx][ny]==-1) continue;
-                map[nx][ny]+= now.amount/5;
-                count++;
+        for(int r=0; r<R; r++){
+            for(int c=0; c<C; c++){
+                if(map[r][c]<5) continue;
+                int count = 0;
+                for(int i=0; i<4; i++){
+                    int nx = r+dir[i][0];
+                    int ny = c+dir[i][1];
+                    if(!isRange(nx,ny) || map[nx][ny]==-1) continue;
+                    tempmap[nx][ny]+= map[r][c]/5;
+                    count++;
+                }
+                tempmap[r][c] -= (map[r][c]/5 * count);
             }
-            map[now.x][now.y] -= (now.amount/5 * count);
         }
+        map = tempmap;
     }
     private static boolean isRange(int x, int y ){
         return x<R && x>=0 && y<C && y>=0;
