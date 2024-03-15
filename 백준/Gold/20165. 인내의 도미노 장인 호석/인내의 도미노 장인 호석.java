@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 public class Main {
     static int n,m,r,answer;
     static boolean[][] visited;
@@ -21,8 +22,8 @@ public class Main {
                 map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-
-        for(int i=0; i<r*2; i++){
+        int cnt = r*2;
+        for(int i=0; i<cnt; i++){
             st = new StringTokenizer(br.readLine());
             int x = Integer.parseInt(st.nextToken());
             int y = Integer.parseInt(st.nextToken());
@@ -34,37 +35,34 @@ public class Main {
             }
 
         }
-        System.out.println(answer);
+        StringBuilder sb = new StringBuilder();
+        sb.append(answer).append("\n");
 
         for(int i=1; i<=n; i++){
             for(int j=1; j<=m; j++){
-                if(visited[i][j]) System.out.print("F ");
-                else System.out.print("S ");
+                if(visited[i][j]) sb.append('F').append(" ");
+                else sb.append('S').append(" ");
             }
-            System.out.println();
+            sb.append("\n");
         }
-
+        System.out.println(sb.toString());
     }
 
-    private static int attack(int x, int y, int d) {
-        if(visited[x][y]) return 0;
+    private static void attack(int x, int y, int d) {
+        if(visited[x][y]) return ;
         answer++;
         visited[x][y] = true;
         int cnt = map[x][y];
-        int sum = 0;
 
         for(int i=0; i<cnt-1; i++){
             int nx = x + dir[d][0];
             int ny = y + dir[d][1];
             if(!isRange(nx,ny)) break;
-            sum += attack(nx,ny,d);
-            if(cnt <sum) {
-                break;
-            }
+            attack(nx,ny,d);
+
             x = nx;
             y = ny;
         }
-        return sum+cnt;
     }
     private static boolean isRange(int x, int y){
         return x>0 && y>0 && x<=n && y<=m;
