@@ -1,4 +1,6 @@
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -10,16 +12,15 @@ class Main {
 
         map = new char[n][n];
         for(int i=0; i<n; i++) Arrays.fill(map[i],' ');
-
-        star(0,0,n);
-        StringBuilder sb =new StringBuilder();
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        star(0,0,n);;
         for(int i=0; i<n; i++){
             for(int j=0; j<n; j++){
-                sb.append(map[i][j]);
+                bw.write(map[i][j]);
             }
-            sb.append('\n');
+            bw.write("\n");
         }
-        System.out.println(sb.toString());
+        bw.flush();
     }
     public static void star(int r, int c, int n){
         if(n==3){
@@ -31,10 +32,10 @@ class Main {
             map[r+1][c+1] = ' ';
         }else{
             int offset = n/3;
-            for(int i=0; i<n; i+=offset){
-                for(int j=0; j<n; j+=offset){
-                    if(i==offset && j==offset) continue;
-                    star(r+i,c+j, offset);
+            for(int i=r; i<n+r; i+=offset){
+                for(int j=c; j<n+c; j+=offset){
+                    if(i==r+offset && j==c+offset) continue;
+                    star(i,j, offset);
                 }
             }
         }
