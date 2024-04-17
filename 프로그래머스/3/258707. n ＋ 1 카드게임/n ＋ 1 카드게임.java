@@ -3,70 +3,65 @@ import java.util.*;
 class Solution {
     Set<Integer> original, additional;
     public int solution(int coin, int[] cards) {
-        int answer = 0;
-        int len = cards.length;
         original = new HashSet();
         additional = new HashSet();
-        
-        int idx = len / 3;
-        for(int i = 0 ; i < idx; ++i)
+        int n = cards.length;
+        for(int i=0; i<n/3; i++){
             original.add(cards[i]);
+        }
+        int round = 0;
         
-        int target = len + 1;   
+        int x = n/3;
+        int target = n+1;
         while(true){
-            answer++;
-            if(idx >= len){
-                break;
-            }
-            additional.add(cards[idx]);
-            additional.add(cards[idx+1]);
-            idx += 2;
-            boolean flag = false;
-            // Step1. 최초 카드에서 해결할 수 있는지 확인.
-            for(int i : original){
-                if(original.contains(target - i)){
-                    original.remove(i);
-                    original.remove(target - i);
-                    flag = true;
+            boolean isEnd = false;
+            round++;
+            if(x>=n) break;
+            int A = cards[x];
+            int B = cards[x+1];
+            additional.add(A);
+            additional.add(B);
+            x+=2;
+            // 내가 갖고 있는 것 비교
+            for(int card  : original){
+                if(original.contains(target-card)){
+                    original.remove(card);
+                    original.remove(target-card);
+                    isEnd = true;
                     break;
                 }
             }
-            
-            // Step2. 최초 카드에서 해결이 안되었다면
-            if(!flag){
-                // 최초 카드와 라운드 추가 카드 1장을 이용해서 해결 할 수 있는지 확인.
-                if(coin > 0){ // 최소 1개 이상의 코인이 있어야 추가 카드를 받아서 사용할 수 있다.
-                    for(int i : original){
-                        if(additional.contains(target - i)){
-                            original.remove(i);
-                            additional.remove(target - i);
-                            --coin;
-                            flag = true;
-                            break;
-                        }
+            // 1장 뽑아서 비교
+            if(!isEnd && coin>0){
+                for(int card : additional){
+                    if(original.contains(target-card)){
+                        original.remove(target-card);
+                        additional.remove(card);
+                        --coin;
+                        isEnd = true;
+                        break;
                     }
                 }
             }
             
-            // Step3. 그래도 해결이 안되었다면, 추가 카드들 간에 해결이 가능한 지 확인.
-            if(!flag){
-                if(coin > 1){ // 최소 2개 이상의 코인이 있어야 추가 카드를 중에서 해결이 가능하다.
-                    for(int i : additional){
-                        if(additional.contains(target - i)){
-                            additional.remove(i);
-                            additional.remove(target - i);
-                            coin -= 2;
-                            flag = true;
-                            break;
-                        }
+            // 2장 뽑아서 비교
+            if(!isEnd && coin>1){
+                for(int card : additional){
+                    if(additional.contains(target-card)){
+                        additional.remove(target-card);
+                        additional.remove(card);
+                        coin-=2;
+                        isEnd = true;
+                        break;
                     }
                 }
             }
-            
-            // 완성되지 않았다.
-            if(!flag)
+            // 없으면 나가기
+            if(!isEnd){
                 break;
+            }
         }
-        return answer;
+        return round;
+        
     }
 }
