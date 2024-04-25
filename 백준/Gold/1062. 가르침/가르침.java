@@ -50,6 +50,7 @@ public class Main {
             }
 
             answer = Math.max(answer,wordnum);
+            return;
         }
 
         for(int i=x; i<26; i++){
