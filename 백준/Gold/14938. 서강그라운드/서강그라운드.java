@@ -22,6 +22,7 @@ public class Main {
         for(int i=1; i<=n; i++){
             item[i] = Integer.parseInt(st.nextToken());
             Arrays.fill(arr[i], m+1);
+            arr[i][i] = 0;
         }
 
         for(int i=0; i<r; i++){
@@ -32,12 +33,7 @@ public class Main {
             arr[s][e] = v;
             arr[e][s] = v;
         }
-        for(int i=1; i<=n; i++){
-            for(int j=1; j<=n; j++){
-                if(i==j) arr[i][j] = 0;
-            }
-        }
-
+   
         for(int k=1; k<=n; k++){
             for(int i=1; i<=n; i++){
                 for(int j=1; j<=n; j++) {
@@ -58,4 +54,3 @@ public class Main {
 
     }
 }
-
