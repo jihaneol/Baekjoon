@@ -1,7 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -37,7 +37,7 @@ public class Main {
             parents[i] = i;
         }
 
-        Town[] arr = new Town[m];
+        PriorityQueue<Town> pq = new PriorityQueue<>();
 
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
@@ -45,20 +45,21 @@ public class Main {
             int e = Integer.parseInt(st.nextToken());
             int v = Integer.parseInt(st.nextToken());
 
-            arr[i] = new Town(s,e,v);
+            pq.add(new Town(s,e,v));
         }
-        Arrays.sort(arr);
+
         // n-2 까지
         int cnt = 0;
         int answer = 0;
-        for(Town town : arr){
 
-            if(cnt == n-2) break;
+        while(n-2>cnt){
+            Town town = pq.poll();
             if(union(town.s, town.e)){
                 cnt++;
                 answer += town.v;
             }
         }
+
         System.out.println(answer);
 
     }
