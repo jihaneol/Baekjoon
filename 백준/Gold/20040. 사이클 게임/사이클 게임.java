@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -30,24 +28,19 @@ public class Main {
         for(int i=0; i<n; i++){
             parents[i] = i;
         }
-        List<Node> LineList = new ArrayList<>();
+        int answer =0;
         for(int i=0; i<m; i++){
             st = new StringTokenizer(br.readLine());
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
-
-            LineList.add(new Node(s,e));
-        }
-
-        int cnt = 0;
-        int answer = 0;
-        for(Node node : LineList){
-            cnt++;
-            if(!union(node)){
-                answer = cnt;
+            if(!union(s,e)){
+                answer = i+1;
                 break;
             }
         }
+        
+
+
 
         System.out.println(answer);
 
@@ -55,9 +48,9 @@ public class Main {
 
     }
 
-    private static boolean union(Node node) {
-        int x = find(node.x);
-        int y = find(node.y);
+    private static boolean union(int x, int y) {
+        x = find(x);
+        y = find(y);
 
         if(x==y){
             return false;
