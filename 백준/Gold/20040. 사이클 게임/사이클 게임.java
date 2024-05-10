@@ -38,7 +38,7 @@ public class Main {
                 break;
             }
         }
-        
+
 
 
 
@@ -55,7 +55,8 @@ public class Main {
         if(x==y){
             return false;
         }else{
-            parents[x] = y;
+            if(x<y) parents[y] = x;
+            else parents[x] = y;
             return true;
         }
     }
