@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.util.*;
 
@@ -20,7 +21,7 @@ public class Main {
                 continue;
             }
             for (int i = index; i > 0; i--) {
-                if (dp[i] != 0) dp[i + cost] = Math.max(dp[i + cost], dp[i] + bite);
+                dp[i + cost] = Math.max(dp[i + cost], dp[i] + bite);
             }
             dp[cost] = Math.max(dp[cost], bite);
             index += cost;
