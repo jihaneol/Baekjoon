@@ -50,7 +50,7 @@ public class Main {
        visited[now] = true;
 
        dfs(team[now]);
-       visited[now] = false;
+  
        done[now] = true;
 
     }
