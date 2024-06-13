@@ -1,6 +1,4 @@
 class Solution {
-    final static Solution method = new Solution();
-    
     public int solution(int temperature, int t1, int t2, int a, int b, int[] onboard) {
         int k = 1000 * 100;
         t1 += 10;
@@ -27,19 +25,19 @@ class Solution {
                 if (( onboard[i] == 1 && t1 <= j && j <= t2 ) || onboard[i] == 0) {
         
                     if (0 <= j+flag && j+flag <= 50) {
-                        minV = method.min(minV, DP[i-1][j+flag]);
+                        minV = min(minV, DP[i-1][j+flag]);
                     }
                     
                     if (j == temperature) {
-                        minV = method.min(minV, DP[i-1][j]);
+                        minV = min(minV, DP[i-1][j]);
                     }
 
                     if (0 <= j-flag && j-flag <= 50) {
-                        minV = method.min(minV, DP[i-1][j-flag] + a);
+                        minV = min(minV, DP[i-1][j-flag] + a);
                     }
                     
                     if (t1 <= j && j <= t2) {
-                        minV = method.min(minV, DP[i-1][j] + b);
+                        minV = min(minV, DP[i-1][j] + b);
                     }
                     
                     DP[i][j] = minV;
@@ -51,7 +49,7 @@ class Solution {
         int i = onboard.length-1;
         int answer = DP[i][0];
         for (int j = 1; j < 51; j++) {
-            answer = method.min(answer, DP[i][j]);
+            answer = min(answer, DP[i][j]);
         }
         return answer;
     }
