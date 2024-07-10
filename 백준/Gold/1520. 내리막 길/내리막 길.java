@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 
 
@@ -32,9 +31,10 @@ public class Main {
 
         if(dp[x][y]!=-1) return dp[x][y];
         dp[x][y] = 0;
+        int nx, ny;
         for(int i=0; i<4; i++){
-            int nx = x + dir[i][0];
-            int ny = y + dir[i][1];
+            nx = x + dir[i][0];
+            ny = y + dir[i][1];
 
             if(!isRange(nx,ny) || map[x][y]<=map[nx][ny]) continue;
 
