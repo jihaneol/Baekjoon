@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    private static int N, M;
+    private static int N, M,k;
     private static int[] data;
     private static int[][] dp; // i칸일때 j명이 있을때 최소값
     private static final int INF = Integer.MAX_VALUE;
@@ -10,14 +10,13 @@ public class Main {
     public static void main(String[] args) {
         init();
         solve();
-        print();
     }
 
-    private static void print() {
+    private static void print(int k) {
         int ans = INF;
         for(int i=N,j=-1; i>0; i--,j++){
             if(data[N]-data[i]+j>M) break;
-            ans = Math.min(dp[N][i],ans);
+            ans = Math.min(dp[k][i],ans);
         }
         System.out.println(ans);
     }
@@ -49,8 +48,10 @@ public class Main {
                     dp[i][j] = Math.min(dp[i][j], dp[i - 1][k] + (M - num) * (M - num));
                 }
             }
+            if(dp[i][N]!=INF) {
+                print(i);
+                break;
+            }
         }
     }
-
-
 }
