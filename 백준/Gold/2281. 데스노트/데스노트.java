@@ -41,6 +41,7 @@ public class Main {
     public static void solve() {
         for (int i = 1; i <= N; i++) { // 칸
             for (int j = 1; j <= N; j++) { //사람 수
+                if(N*i < data[j] + j-1) break;
                 for (int k = 0; k < j; k++) {
                     int num = data[j] - data[k] + j - k - 1;
                     if (dp[i - 1][k] == INF) break;
