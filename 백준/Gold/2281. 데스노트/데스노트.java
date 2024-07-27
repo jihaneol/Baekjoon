@@ -2,57 +2,46 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    private static int N, M,k;
+    private static int N, M;
     private static int[] data;
-    private static int[][] dp; // i칸일때 j명이 있을때 최소값
+    private static int[][] dp;
     private static final int INF = Integer.MAX_VALUE;
 
     public static void main(String[] args) {
         init();
-        solve();
+        print();
     }
 
-    private static void print(int k) {
-        int ans = INF;
-        for(int i=N,j=-1; i>0; i--,j++){
-            if(data[N]-data[i]+j>M) break;
-            ans = Math.min(dp[k][i],ans);
-        }
-        System.out.println(ans);
+    private static void print() {
+        System.out.println(solution(0,0));
     }
 
     public static void init() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
         M = sc.nextInt();
-
-        data = new int[N + 1];
-        dp = new int[N+1][N + 1];
-        for (int[] row : dp) {
-            Arrays.fill(row, INF);
+        data = new int[N];
+        for (int i = 0; i < N; i++) {
+            data[i] = sc.nextInt();
         }
-        for (int i = 0; i <= N; i++)
-            dp[i][0] = 0;
-        for (int i = 1; i <= N; i++) {
-            data[i] += data[i - 1] + sc.nextInt();
+        dp = new int[N + 1][M + 2];
+        for(int[] row : dp){
+            Arrays.fill(row,-1);
         }
     }
 
-    public static void solve() {
-        for (int i = 1; i <= N; i++) { // 칸
-            for (int j = 1; j <= N; j++) { //사람 수
-                if(N*i < data[j] + j-1) break;
-                for (int k = 0; k < j; k++) {
-                    int num = data[j] - data[k] + j - k - 1;
-                    if (dp[i - 1][k] == INF) break;
-                    if (num > M) continue;
-                    dp[i][j] = Math.min(dp[i][j], dp[i - 1][k] + (M - num) * (M - num));
-                }
-            }
-            if(dp[i][N]!=INF) {
-                print(i);
-                break;
-            }
-        }
+    public static int solution(int idx, int cnt) {
+        // 마지막 사람
+        if (idx == N) return 0;
+        if (dp[idx][cnt] != -1) return dp[idx][cnt];
+        int left = M - cnt + 1;
+        // 다음 칸
+        dp[idx][cnt] = solution(idx + 1, data[idx] + 1) + left * left;
+        // 이번 칸
+        if (cnt + data[idx] <= M)
+            dp[idx][cnt] = Math.min(solution(idx + 1, cnt + data[idx]+1),
+                    dp[idx][cnt]);
+
+        return dp[idx][cnt];
     }
 }
