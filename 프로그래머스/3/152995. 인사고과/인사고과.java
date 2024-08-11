@@ -7,17 +7,12 @@ class Solution {
             if(scores[i][0]>scores[0][0] && scores[i][1]>scores[0][1]){
                 return -1;
             }
+            
             if(scores[i][0]+scores[i][1]>scores[0][0] + scores[0][1]){
-
                 if(check(scores[i], scores)){
                     answer++;
                 }
-
             }
-        }
-
-        for(int i=1;i<scores.length;i++){
-            
         }
 
         return answer;
