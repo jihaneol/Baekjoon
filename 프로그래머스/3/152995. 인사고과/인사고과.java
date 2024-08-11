@@ -1,29 +1,23 @@
 import java.util.*;
+
 class Solution {
     public int solution(int[][] scores) {
-        int answer = 1;
-
-        for(int i=1;i<scores.length;i++){
-            if(scores[i][0]>scores[0][0] && scores[i][1]>scores[0][1]){
-                return -1;
+        int[] s = scores[0];
+        Arrays.sort(scores, (s1, s2) -> s1[0] == s2[0] ? s1[1] - s2[1] : s2[0] - s1[0]);
+  
+        int max = 0, ans = 1;
+        for(int[] score : scores) {
+          
+            if(score[1] < max) {
+                if(score.equals(s))
+                    return -1;
             }
-            
-            if(scores[i][0]+scores[i][1]>scores[0][0] + scores[0][1]){
-                if(check(scores[i], scores)){
-                    answer++;
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    public boolean check(int[] arr, int[][] scores){
-        for(int i=0;i<scores.length;i++){
-            if(arr[0]<scores[i][0] && arr[1]<scores[i][1]){
-                return false;
+            else {
+                max = Math.max(max, score[1]);
+                if(s[0] + s[1] < score[0] + score[1])
+                    ans++;
             }
         }
-        return true;
+        return ans;
     }
 }
