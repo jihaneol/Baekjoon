@@ -11,7 +11,7 @@ class Solution {
         int[] temp = starts.clone();
         Arrays.sort(temp);
         Map<Integer,Integer> map = new HashMap();
-        for(int i=e; i>=1; i--){
+        for(int i=e; i>=temp[0]; i--){
             if(dp[i]>=max){
                 max=dp[i];
                 num = i;
@@ -19,9 +19,7 @@ class Solution {
             if(temp[idx]==i){
                 map.put(i,num);
                 idx--;
-                if(idx==-1) break;
             }
-            
         }
         for(int i=0; i<starts.length; i++){
             answer[i] = map.get(starts[i]);

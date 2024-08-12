@@ -1,10 +1,10 @@
 # [level 3] 억억단을 외우자 - 138475 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/138475) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/138475#) 
 
 ### 성능 요약
 
-메모리: 134 MB, 시간: 463.84 ms
+메모리: 144 MB, 시간: 709.71 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 08월 12일 16:39:36
+2024년 08월 12일 16:42:51
 
 ### 문제 설명
 
