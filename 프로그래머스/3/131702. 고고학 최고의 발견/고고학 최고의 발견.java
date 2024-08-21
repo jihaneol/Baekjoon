@@ -31,11 +31,9 @@ class Solution {
     public void dfs(int xy, int[][] clockHands, int cnt){
         count++;
         if(xy==n*n){
-              
-                  System.out.println();
-            for(int i=0; i<n; i++){
-                for(int j=0; j<n; j++){
-                    if(clockHands[i][j]!=0) return;
+            for(int[] row : clockHands){
+                for(int n : row){
+                    if(n!=0) return;
                 }
             }
             answer = Math.min(answer, cnt);
