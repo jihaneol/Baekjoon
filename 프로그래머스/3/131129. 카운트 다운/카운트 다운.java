@@ -1,5 +1,7 @@
+import java.util.*;
 class Solution {
     int[][] dp;
+    final int INF = Integer.MAX_VALUE;
     public int[] solution(int target) {
         int[] answer = new int[2];
         //최선의 경우 던질 다트 수, 그때의 싱글/불을 맞춘 횟수의 합
@@ -10,62 +12,40 @@ class Solution {
         
         dp = new int[target+1][2];
         for(int i=0; i<=target; i++){
-            dp[i][0] = Integer.MAX_VALUE;
-            dp[i][1] = 0;
+            dp[i][0] = INF;
         }
-        
         dp[0][0] = 0;
-        for(int i=1; i<=target; i++){ 
-            for(int j=1; j<=20; j++){ 
-                int b_or_s = -1;
-                //불을 쏘는 경우
-                if(i-50>=0){
-                    if(dp[i][0] > dp[i-50][0]+1){ //더 적게 던지는 경우로 갱신
-                        dp[i][0] = dp[i-50][0]+1;
-                        dp[i][1] = dp[i-50][1]+1;
-                    }
-                    else if(dp[i][0] == dp[i-50][0]+1){ //같은 다트 수라면, 불/싱글을 더 많이 쏘는 경우로 갱신
-                        dp[i][1] = Math.max(dp[i][1], dp[i-50][1]+1); 
-                    }
-                    
+        
+        return play(target);
+    }
+    public int[] play(int n){
+        
+        if(dp[n][0]==INF){
+            //불 계산
+            if(n>=50){
+                int[] temp = play(n-50);
+                if(dp[n][0]>temp[0]+1 ||(dp[n][0]==temp[0]+1 && temp[1]+1>dp[n][1])){
+                    dp[n][0] = temp[0] + 1;
+                    dp[n][1] = temp[1] + 1;
                 }
-                
-                //싱글을 쏘는 경우
-                if(i-j>=0){
-                    if(dp[i][0] > dp[i-j][0]+1){
-                        dp[i][0] = dp[i-j][0]+1;
-                        dp[i][1] = dp[i-j][1]+1;
-                    }
-                    else if(dp[i][0] == dp[i-j][0]+1){ //같은 다트 수라면, 불/싱글을 더 많이 쏘는 경우로 갱신
-                        dp[i][1] = Math.max(dp[i][1], dp[i-j][1]+1); 
-                    }
-                }
-                
-                //더블을 쏘는 경우
-                if(i-2*j>=0){
-                    if(dp[i][0] > dp[i-2*j][0]+1){
-                        dp[i][0] = dp[i-2*j][0]+1;
-                        dp[i][1] = dp[i-2*j][1];
-                    }
-                    
-                }
-                
-                //트리플을 쏘는 경우
-                if(i-3*j>=0){
-                    if(dp[i][0] > dp[i-3*j][0]+1){
-                        dp[i][0] = dp[i-3*j][0]+1; 
-                        dp[i][1] = dp[i-3*j][1];
-                    }
-                }
-
-            
             }
+            // 트리플 더블 싱글 계산
+            int t = n>=20? 20 : n;
+            for(int i=t; i>0; i--){
+                for(int j=1; j<4; j++){
+                    if(n>=i*j){
+                        int[] temp = play(n-i*j);
+                        int cnt = j==1?1:0;
+                        if(dp[n][0]>temp[0]+1 ||(dp[n][0]==temp[0]+1 && temp[1]+cnt>dp[n][1])){
+                            dp[n][0] = temp[0] + 1;
+                            dp[n][1] = cnt + temp[1];
+                        }
+                    }
+                }
+            }
+
         }
-        
-        //다트 수, 싱글/불 횟수
-        answer[0] = dp[target][0];
-        answer[1] = dp[target][1];
-        
-        return answer;
+       
+        return dp[n];
     }
 }
