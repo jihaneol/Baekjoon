@@ -1,39 +1,45 @@
+import java.util.*;
 class Solution {
-    int[] gInfo;
-    int[][] gEdges;
-    int maxSheepCnt = 0;
+    int[] node;
+    ArrayList<Integer>[] graph = new ArrayList[17];
+    boolean[][][] visited;
+    int max = 0;
     public int solution(int[] info, int[][] edges) {
-        gInfo = info;
-        gEdges = edges;
-        boolean[] initVisited = new boolean[info.length];
-        dfs(0, initVisited, 0, 0);
-        
-        return maxSheepCnt;
+       node = info;
+        for(int i=0; i<node.length; i++){
+            graph[i] = new ArrayList();
+        }
+        for(int[] edge  : edges){
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
+        }
+        visited = new boolean[17][18][18];
+        dfs(0,0,0);
+        return max;
     }
 
-    public void dfs(int idx, boolean[] visited, int sheepCnt, int wolfCnt) {
-        visited[idx] = true;
-        if (gInfo[idx] == 0) {
-            sheepCnt++;
-            if (sheepCnt > maxSheepCnt) {
-                maxSheepCnt = sheepCnt;
-            }
-        } else {
-            wolfCnt++;
-        }
+    public void dfs(int idx, int s, int w) {
+      if(visited[idx][s][w]) return;
+        visited[idx][s][w] = true;
+        int backS = s;
+        int backW = w;
+        int backNode = node[idx];
+        if(node[idx]==0)
+            s++;
+        else if(node[idx]==1) 
+            w++;
+        node[idx] =  -1;
 
-        if (sheepCnt <= wolfCnt) {
-            return;
-        }
-
-        for (int[] edge : gEdges) {
-            if (visited[edge[0]] && !visited[edge[1]]) {
-            	boolean[] nextVisited = new boolean[visited.length];
-            	for (int i = 0; i < visited.length; i++) {
-                	nextVisited[i] = visited[i];
-            	}
-                dfs(edge[1], nextVisited, sheepCnt, wolfCnt);
+        if(s>w){
+            max = Math.max(max,s);
+            
+            for(int next : graph[idx]){
+                dfs(next,s,w);
             }
         }
+            
+         node[idx] =  backNode;
+         visited[idx][backS][backW] = false;
+        
     }
 }
