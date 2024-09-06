@@ -2,7 +2,7 @@ class Solution {
     public int solution(int[] diffs, int[] times, long limit) {
         int answer = 0;
         int s=1;
-        int e=1000000000;
+        int e=100000;
        
         while(s<=e){
             long sum = 0;
