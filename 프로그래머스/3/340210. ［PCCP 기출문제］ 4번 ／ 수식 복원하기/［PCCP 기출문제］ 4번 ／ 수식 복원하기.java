@@ -1,89 +1,69 @@
 import java.util.*;
 class Solution {
+    private  Queue<Integer> bits = new LinkedList();
+    private final String ERROR = "ERROR";
     public List<String> solution(String[] expressions) {
         List<String> answer = new ArrayList();
-        Queue<Integer> notation = findNotation(expressions);
-        // x 인 수식들 계산 //100
+        List<String> xList = new ArrayList();
+        for(int i=2; i<10; i++){
+            bits.add(i);
+        }
         for(String exp : expressions){
-
-            String[] temp = exp.split("=");
-            String target = temp[1].strip();
-            if(!target.equals("X")) continue;
-            String[] nums = null;
-            int size = notation.size();
-            int sum = 0;
-            boolean flag = false;
-            Stack<String> result = new Stack();
-            for(int no : notation){
-                if(temp[0].contains("+")){
-                    nums = temp[0].split("\\+");
-                    sum =Integer.parseInt(nums[0].trim(),no)+Integer.parseInt(nums[1].trim(),no);
-
-                }else{
-                    nums = temp[0].split("\\-");
-                    sum =Integer.parseInt(nums[0].trim(),no)-Integer.parseInt(nums[1].trim(),no);
-                }
-                if(!result.isEmpty() && !result.peek().equals(Integer.toString(sum,no))){
-                    flag = true;
-                }
-                result.push(Integer.toString(sum,no));
-                
+            String[] e = exp.split(" "); // 0 2 4
+            if("X".equals(e[4])){
+                xList.add(exp);
             }
-            String tmp;
-            if(flag){
-                tmp = exp.substring(0,exp.length()-1) + "?";
-            }else{
-                tmp = exp.substring(0,exp.length()-1) + result.peek();
-            }
-            
-            answer.add(tmp);
+            cal(e);
         }
         
+        
+        Set<String> set = new HashSet();
+        String tmp = "";
+        for(String exp : xList){
+            String[] e = exp.split(" ");
+            for(int bit : bits){
+                tmp = getResult(bit,e);
+                if(!tmp.equals(ERROR)){
+                    set.add(tmp);
+                }
+            }
+    
+            exp = exp.substring(0,exp.length()-1);
+            if(set.size()==1){
+                answer.add(exp+tmp);
+            }else{
+                answer.add(exp+"?");
+            }
+            set.clear();     
+        }
         
         return answer;
     }
-    public Queue<Integer> findNotation(String[] expressions){
+    public void cal(String[] e){
+        int size= bits.size();
+        while(size-->0){
+            int bit = bits.poll();
+            String b =  getResult(bit,e);
+            if(b.equals(ERROR)) continue;
+            if(b.equals(e[4]) || "X".equals(e[4])){
+                 bits.add(bit);
+            }
+        }
+    }
+    public String getResult(int bit,String[] e){
+  
+        try{
+             int a;
+             if("+".equals(e[1])){
+                 a=Integer.parseInt(e[0],bit)+Integer.parseInt(e[2],bit);
+             }else{
+                 a=Integer.parseInt(e[0],bit)-Integer.parseInt(e[2],bit);
+             }
+             return Integer.toString(a,bit);
+        }catch(Exception e1){
+            return ERROR;
+        }
      
-        Queue<Integer> notation = new LinkedList();
-        for(int i =2; i<10; i++){
-            notation.add(i);
-        }
-        // x 없는 수식들에서 진법 찾기.. //100
-        for(String exp : expressions){
-
-            String[] temp = exp.split("=");
-            String target = temp[1].strip();
-            String[] nums = null;
-            int size = notation.size();
-            for(int i=0; i<size; i++){
-                int no = notation.poll();
-                int sum = 0;
-                try{
-                    if(temp[0].contains("+")){
-                        nums = temp[0].split("\\+");
-                        sum =Integer.parseInt(nums[0].trim(),no)+Integer.parseInt(nums[1].trim(),no);
-                   
-                    }else{
-                        nums = temp[0].split("\\-");
-                        sum =Integer.parseInt(nums[0].trim(),no)-Integer.parseInt(nums[1].trim(),no);
-                    }
-                    if(target.equals("X")){
-                        notation.add(no);
-                    }else{
-                        
-                        if(target.equals(Integer.toString(sum,no))){
-                            notation.add(no);
-                        }
-                    }
-                    
-                }catch(Exception e){
-                    continue;
-                }
-                
-            }       
-        }
-        
-        return notation;
     }
      
 }
