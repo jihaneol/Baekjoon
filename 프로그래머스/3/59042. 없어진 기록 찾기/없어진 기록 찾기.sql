@@ -1,4 +1,7 @@
--- 코드를 입력하세요
-SELECT aout.animal_id as ANIMAL_ID, aout.name AS NAME
-from animal_ins ain right join animal_outs aout on ain.animal_id = aout.animal_id
-where ain.animal_id is null
+SELECT ANIMAL_ID, NAME
+FROM ANIMAL_OUTS A
+WHERE NOT EXISTS(
+    SELECT 1
+    FROM ANIMAL_INS 
+    WHERE A.ANIMAL_ID = ANIMAL_ID
+)
