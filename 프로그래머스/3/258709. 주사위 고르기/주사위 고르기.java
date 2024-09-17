@@ -1,101 +1,92 @@
 import java.util.*;
-
-// v1
 class Solution {
-
-    private int n;
-    private boolean[] visited;
-    private List<int[]> diceComb;
-
-    private List<Integer> scoreA;
-    private List<Integer> scoreB;
-
+    public int n,result;
+    public List<List<Integer>> diceComb = new ArrayList();
     public int[] solution(int[][] dice) {
-         n = dice.length;
-        int[] answer = new int[n / 2];
+        int[] answer = {};
+        result = 0;
+        n = dice.length;
+        // 1. n/2개씩 주사위 분리하기
+        divideDice(0,0, new ArrayList());
+        // 2. 갖고 있는 모든 A,B 주사위의 모든 합 저장 6**5
+        boolean[] choice = new boolean[n];
+        for(List<Integer> A : diceComb){
 
-        visited = new boolean[n];
-        diceComb = new ArrayList<>();
-
-        // 1. A가 뽑을 수 있는 주사위 조합 구하기
-        permutation(0, 0, new int[n / 2]);
-
-        // 2. 주사위 조합 별로 승률 계산
-        int max = 0;
-        for (int[] combA : diceComb) {
-            int[] combB = new int[n / 2];
-            boolean[] other = new boolean[n];
-
-            int index = 0;
-            for (int choice : combA) {
-                other[choice-1] = true;
+            // B 뽑기
+            for(int n : A){
+                choice[n] = true;
             }
-
-            for (int i = 0; i < other.length; i++) {
-                if (!other[i]) {
-                    combB[index++] = i+1;
-                }
+            List<Integer> B = new ArrayList();
+            for(int i=0; i<n; i++){
+                if(!choice[i])
+                    B.add(i);
             }
+            
+            //A B 총합 구하기..
+            List<Integer> totalA = new ArrayList();
+            List<Integer> totalB = new ArrayList();
 
-            scoreA = new ArrayList<>(); // A가 선택한 주사위의 모든 조합
-            scoreB = new ArrayList<>(); // B가 선택한 주사위의 모든 조합
-
-            combDice(0, combA, dice, 0, scoreA);
-            combDice(0, combB, dice, 0, scoreB);
-
-            Collections.sort(scoreA);
-            Collections.sort(scoreB);
-
-            // 3. 이분탐색으로 승리 카운트 찾는다
-            int totalWinCount = 0;
-
-            // 3. 이분탐색으로 승리 카운트 찾는다
-            for (Integer a : scoreA) {
-                int left = 0;
-                int right = scoreB.size();
-
-                while (left + 1 < right) {
-                    int mid = (left + right) / 2;
-
-                    if (a > scoreB.get(mid)) {
-                        left = mid;
-                    } else {
-                        right = mid;
-                    }
-                }
-
-                totalWinCount += left;
+            getTotal(0,A,totalA,0,dice);
+            getTotal(0,B,totalB,0,dice);
+            
+            Collections.sort(totalA);
+            Collections.sort(totalB);
+            
+            // 이분 탐색
+            int Awin = binarySearch(totalA,totalB);
+  
+            if(result<Awin){
+                answer=A.stream().mapToInt(i -> i+1).toArray();
+                result = Awin;
             }
-
-            if (totalWinCount > max) {
-                max = totalWinCount;
-                answer = combA;
-            }
-
+            
+            Arrays.fill(choice,false);
         }
-
         return answer;
+        
     }
-
-    public void combDice(int index, int[] dices, int[][] originDices, int sum, List<Integer> team) {
-        if (index == dices.length) {
-            team.add(sum);
+    public int binarySearch(List<Integer> A , List<Integer> B){
+        int win = 0;
+  
+        for(int target : A){
+            int e = B.size();
+            int s = 0;
+            while(s<e){
+                int mid = (s+e)/2;
+                if(target <=B.get(mid)){
+                    e = mid;
+                }else{
+                    s = mid+1;
+                }
+            }
+            win += e;
+        }
+        return win;
+        
+    }
+    public void getTotal(int depth, List<Integer> dice, List<Integer> total,int sum,int[][] D){
+        if(depth == n/2){
+            total.add(sum);
             return;
         }
-
-        for (int i = 0; i < 6; i++) {
-            combDice(index + 1, dices, originDices, sum + originDices[dices[index]-1][i], team);
+        int now = dice.get(depth);
+        for(int i=0; i<6; i++){
+            int num = D[now][i];
+            getTotal(depth+1, dice, total, sum+num,D);
         }
-    }
+        
 
-    public void permutation(int depth, int index, int[] arr) {
-        if (depth == n / 2) {
-            diceComb.add(arr.clone());
+    }
+    public void divideDice(int idx,int depth, List<Integer> dice){
+        if(depth==n/2){
+            diceComb.add(new ArrayList(dice));
             return;
         }
-        for (int i = index; i < n; i++) {
-            arr[depth] = i+1;
-            permutation(depth + 1, i + 1, arr);
+        
+        for(int i=idx; i<n; i++){
+            dice.add(i);
+            divideDice(i+1,depth+1 , dice);
+            dice.remove(depth);
         }
     }
 }
