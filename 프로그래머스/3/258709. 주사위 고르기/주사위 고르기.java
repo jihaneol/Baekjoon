@@ -1,107 +1,115 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
-public class Solution {
+// v1
+class Solution {
 
-    private int[][] dice;
-    private int[] combi;
-    private ArrayList<int[]> diceCombination;
-    private ArrayList<Integer> score;
+    private int n;
+    private boolean[] visited;
+    private List<int[]> diceComb;
+
+    private List<Integer> scoreA;
+    private List<Integer> scoreB;
 
     public int[] solution(int[][] dice) {
-        int[] answer = {};
-        int diceCnt = dice.length;
-        int maxWinCnt = 0;
+         n = dice.length;
+        int[] answer = new int[n / 2];
 
-        this.dice = dice;
-        this.diceCombination = new ArrayList<>();
-        this.score = new ArrayList<>();
+        visited = new boolean[n];
+        diceComb = new ArrayList<>();
 
-        combi = new int[diceCnt / 2];
-       //모든 점수 조합 구하기
-        calculateCombination(0, 0, diceCnt / 2);
+        // 1. A가 뽑을 수 있는 주사위 조합 구하기
+        permutation(0, 0, new int[n / 2]);
 
-        for (int i = 0; i < diceCombination.size() / 2; i++) {
-            int myIdx = i;
-            int oppIdx = diceCombination.size() - i - 1;
+        Set<int[]> set = new HashSet();
+        // 2. 주사위 조합 별로 승률 계산
+        int max = 0;
+        for (int[] combA : diceComb) {
+            if(set.contains(combA)) break;
+            set.add(combA);
+            int[] combB = new int[n / 2];
+            boolean[] other = new boolean[n];
 
-            int[] myCombination = diceCombination.get(myIdx);
-            int[] oppCombination = diceCombination.get(oppIdx);
+            int index = 0;
+            for (int choice : combA) {
+                other[choice-1] = true;
+            }
 
-		//점수 조합 압축
-            HashMap<Integer, Integer> myScoreCnt = calculateScoreCnt(myCombination, 0, diceCnt / 2);
-            HashMap<Integer, Integer> oppScoreCnt = calculateScoreCnt(oppCombination, 0, diceCnt / 2);
-
-            int winCnt = 0;
-            int loseCnt = 0;
-            for (int m : myScoreCnt.keySet()) {
-                for (int o : oppScoreCnt.keySet()) {
-                    if (m > o) {
-                        winCnt += (myScoreCnt.get(m) * oppScoreCnt.get(o));
-                    } else if (m < o) {
-                        loseCnt += (myScoreCnt.get(m) * oppScoreCnt.get(o));
-                    }
+            for (int i = 0; i < other.length; i++) {
+                if (!other[i]) {
+                    combB[index++] = i+1;
                 }
             }
-            if (maxWinCnt < winCnt) {
-                maxWinCnt = winCnt;
-                answer = myCombination;
+
+            scoreA = new ArrayList<>(); // A가 선택한 주사위의 모든 조합
+            scoreB = new ArrayList<>(); // B가 선택한 주사위의 모든 조합
+
+            combDice(0, combA, dice, 0, scoreA);
+            combDice(0, combB, dice, 0, scoreB);
+
+            Collections.sort(scoreA);
+            Collections.sort(scoreB);
+            int totalWinCount = bs(scoreA,scoreB);
+            int b = bs(scoreB,scoreA);
+            int[] select = combA;
+            if(totalWinCount<b){
+                select = combB;
+                totalWinCount = b;
             }
-            if (maxWinCnt < loseCnt) {
-                maxWinCnt = loseCnt;
-                answer = oppCombination;
+            if (totalWinCount > max) {
+                max = totalWinCount;
+                answer = select;
             }
+            set.add(combB);
+            
+
         }
-        // index 0 주사위 > 1번 주사위 변경 작업
-        for (int i = 0; i < answer.length; i++) {
-            answer[i]++;
-        }
+
         return answer;
     }
+    public int bs(List<Integer> scoreA, List<Integer> scoreB){
+        
+            // 3. 이분탐색으로 승리 카운트 찾는다
+            int totalWinCount = 0;
 
-    private void calculateCombination(int start, int curDepth, int maxDepth) {
-        if (curDepth == maxDepth) {
-            diceCombination.add(arrayDeepCopy(combi));
+            // 3. 이분탐색으로 승리 카운트 찾는다
+            for (Integer a : scoreA) {
+                int left = 0;
+                int right = scoreB.size();
+
+                while (left < right) {
+                    int mid = (left + right) / 2;
+
+                    if (a > scoreB.get(mid)) {
+                        left = mid+1;
+                    } else {
+                        right = mid;
+                    }
+                }
+
+                totalWinCount += right;
+            }
+        return totalWinCount;
+    }
+
+    public void combDice(int index, int[] dices, int[][] originDices, int sum, List<Integer> team) {
+        if (index == dices.length) {
+            team.add(sum);
             return;
         }
-        for (int i = start; i < dice.length; i++) {
-            combi[curDepth] = i;
-            calculateCombination(i + 1, curDepth + 1, maxDepth);
+
+        for (int i = 0; i < 6; i++) {
+            combDice(index + 1, dices, originDices, sum + originDices[dices[index]-1][i], team);
         }
     }
 
-    private int[] arrayDeepCopy(int[] arr) {
-        return Arrays.stream(arr).toArray();
-    }
-
-    private HashMap<Integer, Integer> calculateScoreCnt(int[] combi, int curDepth, int maxDepth) {
-        if (curDepth == maxDepth) {
-            HashMap<Integer, Integer> scoreCnt = new HashMap<>();
-            for (int s : score) {
-                if (!scoreCnt.containsKey(s)) {
-                    scoreCnt.put(s, 1);
-                } else {
-                    scoreCnt.put(s, scoreCnt.get(s) + 1);
-                }
-            }
-            score.clear();
-            return scoreCnt;
+    public void permutation(int depth, int index, int[] arr) {
+        if (depth == n / 2) {
+            diceComb.add(arr.clone());
+            return;
         }
-        int idx = combi[curDepth];
-        if (score.size() == 0) {
-            for (int i = 0; i < 6; i++) {
-                score.add(dice[idx][i]);
-            }
-        } else {
-            int size = score.size();
-            for (int i = 0; i < size; i++) {
-                int s = score.remove(0);
-                for (int j = 0; j < 6; j++) {
-                    score.add(dice[idx][j] + s);
-                }
-            }
+        for (int i = index; i < n; i++) {
+            arr[depth] = i+1;
+            permutation(depth + 1, i + 1, arr);
         }
-        return calculateScoreCnt(combi, curDepth + 1, maxDepth);
     }
 }
