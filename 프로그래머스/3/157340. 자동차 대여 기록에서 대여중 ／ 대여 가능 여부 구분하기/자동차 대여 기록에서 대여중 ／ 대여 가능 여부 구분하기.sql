@@ -1,9 +1,8 @@
 -- 코드를 입력하세요
 SELECT  CAR_ID, MAX(CASE
-                WHEN DATE("2022-10-16") BETWEEN DATE(START_DATE) AND DATE(END_DATE) THEN "대여중"
+                WHEN "2022-10-16" BETWEEN START_DATE AND END_DATE THEN "대여중"
                 ELSE "대여 가능"
                END) AS AVAILABILITY
 from CAR_RENTAL_COMPANY_RENTAL_HISTORY 
 GROUP BY CAR_ID
 order by CAR_ID DESC;
-
