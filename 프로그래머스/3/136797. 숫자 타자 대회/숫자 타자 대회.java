@@ -1,57 +1,94 @@
 import java.util.*;
 class Solution {
-    private int[][][] dp;
-    private int[][] location = {{3,1},{0,0},{0,1},{0,2}
-                                     ,{1,0},{1,1},{1,2}
-                                     ,{2,0},{2,1},{2,2}};
-    private final int INF = 10000000;
+    int[][][] dp;
+    final int INF = Integer.MAX_VALUE;
     public int solution(String numbers) {
-        dp = new int[10][10][numbers.length()+1]; // 왼,오,순서
+        int answer = INF;
+        dp = new int[10][10][numbers.length()+1];
         for(int i=0; i<10; i++){
             for(int j=0; j<10; j++){
                 Arrays.fill(dp[i][j],INF);
             }
         }
         dp[4][6][0] = 0;
-       for(int depth=0; depth<numbers.length(); depth++){
-           int num = numbers.charAt(depth)-'0';
-        for(int left = 0; left<10; left++){
-            for(int right = 0; right<10 ;right++){
-                if(left==right) continue;
-              if(dp[left][right][depth] != INF){
-                   
-                  dp[num][right][depth+1] = 
-                      Math.min(dp[left][right][depth]+distance(num,left)
-                                          , dp[num][right][depth+1]);
-                dp[left][num][depth+1] = 
-                    Math.min(dp[left][right][depth]+distance(num,right)
-                                                  , dp[left][num][depth+1]);
-              }  
+        
+        for(int t=0; t<numbers.length(); t++){
+            int target = numbers.charAt(t)-'0';
+            for(int i=0; i<10; i++){
+                for(int j=0; j<10; j++){
+                    if(i==j || dp[i][j][t]==INF) continue; 
+                        if(target!=j){
+                            dp[target][j][t+1] = Math.min(dp[target][j][t+1]
+                                                 ,dp[i][j][t] + getOptimalValue(target,i));
+                        }
+                        if(target!=i){
+                               dp[i][target][t+1] = Math.min(dp[i][target][t+1],
+                                                  dp[i][j][t] + getOptimalValue(target,j));
+                        }
+           
+                }
             }
         }
-        
-       }
-        int n = numbers.length()-1;
-        int end = numbers.charAt(n) - '0';
-        int answer = INF;
+        int end = numbers.charAt(numbers.length()-1) - '0';
         for(int i=0; i<10; i++){
-           answer = Math.min(answer
-                    ,Math.min(dp[i][end][n+1],dp[end][i][n+1]));
+            if(dp[i][end][numbers.length()]<answer){
+                    answer = dp[i][end][numbers.length()];
+            }
+            if(dp[end][i][numbers.length()]<answer){
+                    answer = dp[end][i][numbers.length()];
+            }
+            
         }
         
-       
         return answer;
     }
-    
-    public int distance(int x, int y){
-        int a = Math.abs(location[x][0]-location[y][0]);
-        int b = Math.abs(location[x][1]-location[y][1]);
+    private int getOptimalValue(int target, int key){
+        int[] endPos = getPos(target);
+        int[] startPos = getPos(key);
+        int distance = getDistance(startPos, endPos);
         
-        if(a==0 && b==0) return 1;
-        else if(a==0 || b==0){
-            return  a>b ? a*2 : b*2;
+        if(distance == 0 || distance == 1){
+            distance+=1;
+        }else if(distance == 3){
+            if((key==0 && target==2) || (key==2 && target==0)){
+                distance+=3;
+            }else{
+                distance+=2;
+            }
+      
+        }else if(distance == 2){
+            if(isDiagonal(startPos, endPos)){
+                distance+=1;
+            }else{
+                distance+=2;
+            }
         }else{
-            return a==b? a*3: (a+b)*2-1;
+             if(isDiagonal(startPos, endPos)){
+                distance+=2;
+            }else{
+                distance+=3;
+            }
         }
+        return distance;
     }
+    private boolean isDiagonal(int[] s, int[] e){
+        return Math.abs(s[0]-e[0]) == Math.abs(s[1]-e[1]);
+    }
+    
+    private int getDistance(int[] s, int[] e){
+        return Math.abs(s[0]-e[0])+Math.abs(s[1]-e[1]);
+    }
+    
+    private int[] getPos(int num){
+        int[] pos = {3,1};
+        if(num==0){
+            return pos;
+        }
+        int x = (num-1)/3;
+        int y = (num-1)%3;
+        pos[0] = x;
+        pos[1] = y;
+        return pos;
+    }
+    
 }
