@@ -42,43 +42,24 @@ class Solution {
         
         return answer;
     }
+    
     private int getOptimalValue(int target, int key){
         int[] endPos = getPos(target);
         int[] startPos = getPos(key);
-        int distance = getDistance(startPos, endPos);
+        int x = Math.abs(startPos[0] - endPos[0]); 
+        int y = Math.abs(startPos[1] - endPos[1]);
         
-        if(distance == 0 || distance == 1){
-            distance+=1;
-        }else if(distance == 3){
-            if((key==0 && target==2) || (key==2 && target==0)){
-                distance+=3;
-            }else{
-                distance+=2;
-            }
-      
-        }else if(distance == 2){
-            if(isDiagonal(startPos, endPos)){
-                distance+=1;
-            }else{
-                distance+=2;
-            }
-        }else{
-             if(isDiagonal(startPos, endPos)){
-                distance+=2;
-            }else{
-                distance+=3;
-            }
+        if(x==0 && y==0){ // 0일때
+            return 1;
+        }else if(x==0 || y==0){ // 직각
+            return x>y? x*2 : y*2;
+        }else {
+            return x==y? x*3 : (x+y)*2-1;
+            
         }
-        return distance;
+
     }
-    private boolean isDiagonal(int[] s, int[] e){
-        return Math.abs(s[0]-e[0]) == Math.abs(s[1]-e[1]);
-    }
-    
-    private int getDistance(int[] s, int[] e){
-        return Math.abs(s[0]-e[0])+Math.abs(s[1]-e[1]);
-    }
-    
+      
     private int[] getPos(int num){
         int[] pos = {3,1};
         if(num==0){
@@ -92,3 +73,5 @@ class Solution {
     }
     
 }
+   
+  
