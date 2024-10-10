@@ -1,44 +1,35 @@
 import java.util.*;
 class Solution {
-    private static int answer;
-    private static List<Integer>[] graph;
-    private static boolean[] visited;
+    List<List<Integer>> tree = new ArrayList();
+    boolean[] visited;
+    int[][] dp;
     public int solution(int n, int[][] lighthouse) {
-        
-        answer = 0;
-        graph = new List[n+1];
         visited = new boolean[n+1];
-        
-        for(int i=1; i<n+1; i++){
-            graph[i] = new ArrayList();
+        dp = new int[n+1][2];
+        for(int i=0; i<=n; i++){
+            tree.add(new ArrayList());
+        }
+        for(int[] light : lighthouse){
+            int s = light[0];
+            int e = light[1];
+            tree.get(s).add(e);
+            tree.get(e).add(s);
         }
        
-        for(int i=0; i<n-1; i++){
-            graph[lighthouse[i][0]].add(lighthouse[i][1]);
-            graph[lighthouse[i][1]].add(lighthouse[i][0]);
-        }
-        
-        connect(1);
-        
-        return answer;
+        visited[1] = true;
+        return findMinimumRightCnt(1);
     }
-    private static boolean connect(int start){
-        
+    public int findMinimumRightCnt(int start){
+        dp[start][1] = 1;
         visited[start] = true;
-        // 0 1 판단.
-        boolean hasLeaf = false;
-        for(int next : graph[start]){
-            if(visited[next]) continue;
-            if(connect(next)){
-                hasLeaf = true;
+        for(int next : tree.get(start)){
+            if(!visited[next]){
+                dp[start][1]+=findMinimumRightCnt(next);
+                dp[start][0] += dp[next][1];
             }
-            
         }
-        if(hasLeaf) {
-            answer++;
-            return false;
-        }
-        else return true;
+        return Math.min(dp[start][0], dp[start][1]); 
     }
+   
  
 }
