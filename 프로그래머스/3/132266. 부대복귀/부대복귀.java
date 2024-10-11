@@ -1,45 +1,47 @@
 import java.util.*;
 
 class Solution {
-    int[] cost;
-    List<Integer>[] graph;
+    List<List<Integer>> road = new ArrayList();
+    int[] distance;
     public int[] solution(int n, int[][] roads, int[] sources, int destination) {
-        graph = new List[n + 1];
-        for(int i = 0 ; i <= n; ++i)
-            graph[i] = new ArrayList();
-        
-        for(int[] data : roads){
-            // 양방향 연결
-            graph[data[0]].add(data[1]);
-            graph[data[1]].add(data[0]);
+        int[] answer = new int[sources.length];
+        distance = new int[n+1];
+        for(int i=0; i<=n; i++){
+            road.add(new ArrayList());
         }
         
-        cost = new int[n + 1];
-        Arrays.fill(cost, -1); // 경로가 없는 경우 -1 출력하기 위함.
-        search(destination);
+        for(int[] r : roads){
+            int s = r[0];
+            int e = r[1];
+            road.get(s).add(e);
+            road.get(e).add(s);
+        }
+        Arrays.fill(distance,-1);
+        distance[destination] = 0;
+        bfs(destination);
         
-        int[] answer = new int[sources.length];
-        for(int i = 0; i < sources.length; ++i)
-            answer[i] = cost[sources[i]];
-        
+        for(int i=0; i<sources.length; i++){
+            answer[i] = distance[sources[i]];
+        }
         return answer;
     }
-    
-    public void search(int start){
-        Queue<Integer> q = new ArrayDeque();
+    public void bfs(int start){
+        Queue<Integer> q = new LinkedList();
         q.add(start);
-        cost[start] = 0;
         
         while(!q.isEmpty()){
-            int cur = q.poll();
-            int len = graph[cur].size();
-            for(int i = 0; i < len; ++i){
-                int next = graph[cur].get(i);
-                if(cost[next] == -1){
-                    cost[next] = cost[cur] + 1;
-                    q.add(next);
+            int size = q.size();
+            while(size-->0){
+                int now = q.poll();
+                
+                for(int next : road.get(now)){
+                    if(distance[next]==-1){
+                        distance[next] = distance[now]+1;
+                        q.add(next);
+                    }
                 }
             }
         }
     }
+    
 }
