@@ -1,62 +1,60 @@
 class Solution {
-    int n, m, answer;
-    int[][] board;
-    int[][] t;
-    final int INF = 10000;
+    private int n, m, answer;
+    final int INF = 100000;
+    private int[][] board, t;
     public int solution(int[][] beginning, int[][] target) {
         answer = INF;
         n = beginning.length;
         m = beginning[0].length;
         
         board = new int[n][m];
+        t = new int[n][m];
         for(int i=0; i<n; i++){
             board[i] = beginning[i].clone();
+            t[i] = target[i].clone();
         }
-        t = target;
-        
-        dfs(0, 0);
-        
-        return answer == INF ? -1 : answer;
+        dfs(0,0);
+        return answer==INF ? -1 : answer;
     }
     
-    public void flip_row(int r){
+    private void flipRow(int row){
         for(int i=0; i<m; i++){
-            board[r][i] ^= 1;
+            board[row][i] ^= 1;
         }
     }
-    
-    public int compare_col(int c){
-        int check = 0;
+    private int compareCol(int col){
+        int cnt = 0;
         for(int i=0; i<n; i++){
-            if(t[i][c]==board[i][c]){
-                check++; 
-            } 
+            if(board[i][col] == t[i][col]){
+                cnt++;
+            }
         }
-        
-        if(check==n) return 0; //전부 일치
-        else if(check==0) return 1; //전부 불일치
+        if(cnt==0) return 1;
+        else if(cnt == n) return 0;
         else return -1;
     }
-    
-    public void dfs(int r, int cnt){
-        if(r==n){
+    private void dfs(int depth, int total){
+        if(depth == n){
             for(int i=0; i<m; i++){
-                int result = compare_col(i);
-                if(result==-1){
+                int cnt = compareCol(i);
+                if(cnt==-1){
                     return;
                 }
-                cnt += result; //전부 반대일 경우 +1
+                total+=cnt;
             }
-            
-            answer = Math.min(answer, cnt);   
-            
+            answer = Math.min(answer,total);
             return;
         }
         
-        flip_row(r); 
-        dfs(r+1, cnt+1); 
-        flip_row(r); 
+        flipRow(depth);
+        dfs(depth+1, total+1);
+         
+        flipRow(depth);
         
-        dfs(r+1, cnt); 
+        dfs(depth+1, total);
+        
+        return;
     }
+    
+  
 }
