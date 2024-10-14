@@ -1,19 +1,19 @@
 class Solution {
     public int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
-    public int n, answer, count;
+    public int n, answer;
     public int solution(int[][] clockHands) {
         n = clockHands.length;
         answer = Integer.MAX_VALUE;
         int[][] copyMap = new int[n][n];
         // 첫번째 칸 해결
-        for(int bit1=0; bit1<Math.pow(4,n); bit1++){
+        for(int i=0; i<Math.pow(4,n); i++){ // 00|00|00| ~n
             deepCopy(copyMap,clockHands);
             
-            int bit = bit1;
+            int bit = i;
             int cnt = 0;
-            for(int i=0; i<n; i++){
-                cnt += bit%4;
-                rotationClock(0,i,copyMap,bit%4);
+            for(int j=0; j<n; j++){
+                cnt += bit%4; // 회전수
+                rotationClock(0,j,copyMap,bit%4);
                 bit>>=2;
             }
            
@@ -29,29 +29,35 @@ class Solution {
         }
     }
     public void dfs(int xy, int[][] clockHands, int cnt){
-        count++;
         if(xy==n*n){
-            for(int[] row : clockHands){
-                for(int n : row){
-                    if(n!=0) return;
-                }
+            if(!isAllClockZero(clockHands)){
+                return;
             }
             answer = Math.min(answer, cnt);
             return;
         }
         int x = xy/n;
         int y = xy%n;
-    
+        // 윗 부분 0 이면 다음
         if(clockHands[x-1][y]==0){
             dfs(xy+1, clockHands, cnt);
             return;
         }
+        // 윗 부분 만큼 돌리기
         int num = 4-clockHands[x-1][y];
-        //돌리기
+        
         rotationClock(x, y, clockHands,num);
        
         dfs(xy+1, clockHands, cnt+num);
  
+    }
+    private boolean isAllClockZero(int[][] clockHands){
+        for(int[] row : clockHands){
+            for(int n : row){
+                if(n!=0) return false;
+            }
+        }
+        return true;
     }
 
     public void rotationClock(int x, int y,int[][] clockHands, int num){
