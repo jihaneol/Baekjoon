@@ -1,51 +1,44 @@
 import java.util.*;
 class Solution {
-    int[][] dp;
-    final int INF = Integer.MAX_VALUE;
+    private int[][] dp;
+    private final int INF = Integer.MAX_VALUE;
     public int[] solution(int target) {
-        int[] answer = new int[2];
-        //최선의 경우 던질 다트 수, 그때의 싱글/불을 맞춘 횟수의 합
-        
-        //점수, 던진 횟수, 싱글/볼을 맞춘 횟수
-        //dp[i][0] = c, 점수: i, 던진 횟수: c
-        //dp[i][1] = s, 싱글/불 맞춘 횟수: s
-        
-        dp = new int[target+1][2];
+        dp = new int[target+1][2]; // 0 은 횟수 , 1은 볼/싱글 횟수
         for(int i=0; i<=target; i++){
             dp[i][0] = INF;
         }
         dp[0][0] = 0;
-        
+       
         return play(target);
     }
+    
+    // 바트업 방식의 코드 구현
     public int[] play(int n){
         
-        if(dp[n][0]==INF){
-            //불 계산
-            if(n>=50){
-                int[] temp = play(n-50);
-                if(dp[n][0]>temp[0]+1 ||(dp[n][0]==temp[0]+1 && temp[1]+1>dp[n][1])){
-                    dp[n][0] = temp[0] + 1;
-                    dp[n][1] = temp[1] + 1;
-                }
+        if(dp[n][0]!=INF) return dp[n];
+        
+        if(n-50>=0){
+            int[] tmp = play(n-50); // 최소 보장;
+            if(dp[n][0]>tmp[0]+1 || (dp[n][0]==tmp[0]+1 && tmp[1]+1>dp[n][1])){
+                dp[n][0] = tmp[0] + 1;
+                dp[n][1] = tmp[1] + 1;
             }
-            // 트리플 더블 싱글 계산
-            int t = n>=20? 20 : n;
-            for(int i=t; i>0; i--){
-                for(int j=1; j<4; j++){
-                    if(n>=i*j){
-                        int[] temp = play(n-i*j);
-                        int cnt = j==1?1:0;
-                        if(dp[n][0]>temp[0]+1 ||(dp[n][0]==temp[0]+1 && temp[1]+cnt>dp[n][1])){
-                            dp[n][0] = temp[0] + 1;
-                            dp[n][1] = cnt + temp[1];
-                        }
-                    }
-                }
-            }
-
         }
-       
+        
+        for(int i=1; i<4; i++){
+            for(int score=1; score<21; score++){
+                if(n-score*i<0) break;
+                int[] tmp = play(n-score*i);
+                int cnt = i==1 ? 1 : 0;
+                if(dp[n][0]>tmp[0]+1 || (dp[n][0]==tmp[0]+1 && tmp[1]+cnt>dp[n][1])){
+                    dp[n][0] = tmp[0] + 1;
+                    dp[n][1] = tmp[1] + cnt;
+                }
+            }
+        }
+        
+        
         return dp[n];
+      
     }
 }
