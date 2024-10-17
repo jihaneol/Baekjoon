@@ -1,45 +1,44 @@
 import java.util.*;
 class Solution {
-    int[] node;
-    ArrayList<Integer>[] graph = new ArrayList[17];
-    boolean[][][] visited;
     int max = 0;
+    int n,answer;
+    int[] copyinfo;
+    boolean[][] visited;
+    List<List<Integer>> tree = new ArrayList();
     public int solution(int[] info, int[][] edges) {
-       node = info;
-        for(int i=0; i<node.length; i++){
-            graph[i] = new ArrayList();
+        n = info.length;
+        copyinfo = info;
+        answer = 0;
+        visited = new boolean[2<<n][n];
+        for(int i=0; i<n; i++){
+            tree.add(new ArrayList());
         }
-        for(int[] edge  : edges){
-            graph[edge[0]].add(edge[1]);
-            graph[edge[1]].add(edge[0]);
+        for(int[] edge : edges){
+            int s  = edge[0];
+            int e  = edge[1];
+            tree.get(s).add(e);
+            tree.get(e).add(s);
         }
-        visited = new boolean[17][18][18];
-        dfs(0,0,0);
-        return max;
+        find(0,0,0,0);
+        return answer;
     }
-
-    public void dfs(int idx, int s, int w) {
-      if(visited[idx][s][w]) return;
-        visited[idx][s][w] = true;
-        int backS = s;
-        int backW = w;
-        int backNode = node[idx];
-        if(node[idx]==0)
-            s++;
-        else if(node[idx]==1) 
-            w++;
-        node[idx] =  -1;
-
-        if(s>w){
-            max = Math.max(max,s);
-            
-            for(int next : graph[idx]){
-                dfs(next,s,w);
+    private void find(int key , int scnt, int wcnt, int now){
+      
+        if(visited[key][now]) return;
+        visited[key][now] = true;
+        // key check
+        if((key & (1<<now)) == 0){
+            if(copyinfo[now]==0){
+                scnt++;
+                answer = Math.max(answer, scnt);
+            }else{
+                wcnt++;
             }
+            key = key | 1<<now;
         }
-            
-         node[idx] =  backNode;
-         visited[idx][backS][backW] = false;
-        
+        if(scnt <=wcnt) return;
+        for(int next : tree.get(now)){
+            find(key,scnt,wcnt,next);
+        }
     }
 }
