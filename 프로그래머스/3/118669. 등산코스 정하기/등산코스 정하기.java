@@ -1,11 +1,11 @@
 import java.util.*;
 class Solution {
     
-    public class Node{
-        int e, w;
-        Node(int e, int w){
-            this.e = e;
-            this.w = w;
+    private class Node{
+        int number, value;
+        Node(int n, int v){
+            this.number = n;
+            this.value = v;
         }
     }
     private List<List<Node>> graph;
@@ -45,21 +45,21 @@ class Solution {
             q.add(new Node(gate,0));
             intensity[gate] = 0; //시작지점
         }
-        
+       
         while(!q.isEmpty()){
             Node now = q.poll();
             
-            if(now.w > intensity[now.e]) continue;
+            if(now.value > intensity[now.number]) continue;
             
-            for(Node next : graph.get(now.e)){
-                if(intensity[next.e] > Math.max(next.w, intensity[now.e])){
-                    intensity[next.e] = Math.max(next.w, intensity[now.e]);
-                    q.add(new Node(next.e,intensity[next.e]));
+            for(Node next : graph.get(now.number)){
+                if(intensity[next.number] > Math.max(next.value, intensity[now.number])){
+                    intensity[next.number] = Math.max(next.value, intensity[now.number]);
+                    q.add(new Node(next.number,intensity[next.number]));
                 }
             }
         }
         int in = 100000001; // 최솟값
-        int summ = 50001; // 산봉우리
+        int summ = 0; // 산봉우리
         
         Arrays.sort(summits);
 
