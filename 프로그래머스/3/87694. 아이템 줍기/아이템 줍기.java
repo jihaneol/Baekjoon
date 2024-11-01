@@ -8,7 +8,7 @@ class Solution {
         for(int[] rect : rectangle){
             makeRectangle(rect[0]*2, rect[1]*2, rect[2]*2, rect[3]*2);
         }
-    
+
         Queue<int[]> q = new LinkedList();
         q.add(new int[]{characterX*2, characterY*2});
         int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
@@ -18,7 +18,7 @@ class Solution {
             answer++;
             for(int i=0; i<size; i++){
                 int[] now = q.poll();
-            
+
                 if(now[0]==itemX*2 && now[1]==itemY*2){
                     flag = false;
                     break;
@@ -32,10 +32,10 @@ class Solution {
                     }
                 }
             }
-            
         }
         return answer/2;
     }
+    
     public void makeRectangle(int x1, int y1, int x2, int y2){
         //선 그리기
         for(int i=x1; i<=x2; i++){
@@ -43,18 +43,17 @@ class Solution {
                 board[i][y1] = 1;
             if(board[i][y2]==0)
                 board[i][y2] = 1;
-           
         }
-        
+
         for(int j=y1; j<=y2; j++){
             if(board[x1][j]==0)
                 board[x1][j]=1;
-                
+
             if(board[x2][j]==0){
                 board[x2][j]=1;
             }
         }
-        
+
         //내부 채우기
         for(int i=x1+1; i<=x2-1; i++){
             for(int j=y2-1; j>=y1+1; j--){
