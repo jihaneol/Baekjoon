@@ -26,7 +26,7 @@ class Solution {
                     bottom -= dist;
                 top = Math.max(0, top - dist);
             }
-
+           
             // 범위가 격자를 벗어나면 더 이상 유효한 시작점이 없음
             if (left >= m || right < 0 || top >= n || bottom < 0) {
                 return 0;
