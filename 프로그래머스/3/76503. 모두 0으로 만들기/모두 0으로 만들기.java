@@ -1,7 +1,6 @@
 import java.util.*;
 class Solution {
     private int[] topology;
-    private boolean[] visited;
     private long answer;
     private List<List<Integer>> tree= new ArrayList();
     
@@ -10,8 +9,8 @@ class Solution {
         long sum = 0;
         int len = a.length;
         topology = new int[len];
-        visited = new boolean[len];
         long[] b = new long[a.length];
+        
         for(int i=0; i<len; i++){
             tree.add(new ArrayList());
             b[i] = a[i];
@@ -32,7 +31,9 @@ class Solution {
         if(isZero && a[len-1]==0) return 0;
         
         if(sum!=0) return -1;
+        
         Queue<Integer> q = new ArrayDeque();
+        // 리프 노드 찾기
         for(int i=0; i<len; i++){
             if(topology[i]==1){
                 q.add(i);
@@ -41,10 +42,9 @@ class Solution {
         
         while(!q.isEmpty()){
             int now = q.poll();
-            visited[now] = true;
         
             for(int next :tree.get(now)){
-                if(visited[next]) continue;
+                if(topology[next]==0) continue;
                 b[next] += b[now];
                 answer+= Math.abs(b[now]);
                 topology[now]--;
