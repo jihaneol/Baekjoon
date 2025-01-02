@@ -10,7 +10,7 @@ class Solution {
         m = new int[n+1][n+1];
         for(int i=1; i<=n; i++){
             for(int j=1; j<=n; j++){
-                m[i][j] = 100000000;
+                m[i][j] = 100_000_000;
             }
         }
         cycle = new boolean[n+1];
