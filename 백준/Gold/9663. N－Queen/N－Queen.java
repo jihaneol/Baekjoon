@@ -1,36 +1,43 @@
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class Main {
-	
-	static int N,answer;
-	static boolean coL[],diagonalR[],diagonalL[];
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		coL = new boolean[N+1];
-		diagonalL=new boolean[N*2+1];
-		diagonalR=new boolean[N*2+1];
-	
-		setQueen(1);
-		System.out.println(answer);
-	}
-	private static void setQueen(int rowNo) { // rowNo:놓으려고 하는 퀸의 행번호
-		
-		if(rowNo>N) {
-			answer++;
-			return;
-		}
-		
-		for(int c=1; c<=N; c++) { //열 
-			if(!isAvailable(rowNo, c)) continue;
-			diagonalL[rowNo-c+N] = diagonalR[rowNo+c] = coL[c] = true;
-			setQueen(rowNo+1);
-			diagonalL[rowNo-c+N] = diagonalR[rowNo+c] = coL[c] = false;
-		}
-	}
-	private static boolean isAvailable(int rowNo,int c) {
-		return !diagonalL[rowNo-c+N] && !diagonalR[rowNo+c] && !coL[c];
-	}		
+    private static boolean[] arr_c;
+    private static boolean[][] board;
+    private static int n;
+    private static int answer;
+    private static boolean[] diagonalR, diagonalL;
 
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        n = sc.nextInt();
+        arr_c = new boolean[n];
+        diagonalR = new boolean[n*2];
+        diagonalL = new boolean[n*2];
+
+        back(0);
+        System.out.println(answer);
+    }
+
+    private static void back(int row) {
+        if (row == n) {
+            answer++;
+            return;
+        }
+
+        for(int col = 0; col < n; col++) {
+            if(arr_c[col] || isDiagonal(row,col)) continue;
+                arr_c[col] = true;
+                diagonalR[row+col] = true;
+                diagonalL[row-col+n] = true;
+                back(row+1);
+                arr_c[col] = false;
+                diagonalR[row+col] = false;
+                diagonalL[row-col+n] = false;
+            }
+        }
+
+    private static boolean isDiagonal(int row, int col) {
+        return diagonalL[row-col+n] || diagonalR[row+col];
+    }
 }
