@@ -19,8 +19,8 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = null;
         StringBuilder sb = new StringBuilder();
-        int test = 4;
-        while (test-- > 0) {
+        int game = 4;
+        while (game-- > 0) {
             answer = 0;
             scoreBoard = new int[7][3];
             nowScoreBoard = new int[7][3];
@@ -29,9 +29,7 @@ public class Main {
             for (int i = 1; i < 7; i++) {
                 for (int j = 0; j < 3; j++) {
                     scoreBoard[i][j] = Integer.valueOf(st.nextToken());
-
                 }
-
             }
 
             // 경기 시작
