@@ -1,23 +1,25 @@
 import java.util.*;
 class Solution {
     public int solution(int[] players, int m, int k) {
-        PriorityQueue<int[]> pq = new PriorityQueue<>((o1,o2) -> o1[0] - o2[0]);
-        int size = 0;  // 현재 서버의 개수 
-        int count = 0; // 증설된 서버 횟수  
-        for(int i = 0; i < 24; i++){
-            // 만료된 서버 내리기 
-            while(!pq.isEmpty() && pq.peek()[0] == i){
-                size -= pq.poll()[1];
+       
+        int answer = 0; // 증설 횟수
+        int[] servers = new int[24];
+        
+        for(int i=0; i<24; i++){
+            int player = players[i]; // 게임 이용자의 수
+            int n = servers[i];      // 증설된 서버의 수
+            
+            int need = player/m - n; // 필요한 서버 수
+            
+            if(need > 0){
+                for(int j=0; j<k; j++){
+                    if(i+j>=24) break;
+                    servers[i+j] += need;
+                }
+                answer += need;
             }
-            int need = players[i] / m;  // 현재 필요한 서버의 개수 
-            int more = size - need;     // - 서버 증설 개수  
-            if(more < 0){
-                more = -more;
-                size  += more;
-                count += more;
-                pq.add(new int []{i + k, more});
-            }
+
         }
-        return count;
+        return answer;
     }
 }
