@@ -12,18 +12,13 @@ public class Main {
         int t = sc.nextInt();
         int p = sc.nextInt();
 
-        int total = 0;
-        for(int i=0; i<6; i++){
+        int tBundle = 0;
+        for (int i = 0; i < 6; i++) {
             int s = shirts[i];
-            if(s%t==0){
-                total += s/t;
-            }else{
-                total += s/t+1;
-            }
+            tBundle += (s + t - 1) / t;
         }
-        System.out.println(total);
-        int cnt = n/p;
-        System.out.print(cnt + " ");
-        System.out.print(n - cnt*p);
-   }
+        System.out.println(tBundle);
+        System.out.print(n / p + " ");
+        System.out.print(n % p);
+    }
 }
