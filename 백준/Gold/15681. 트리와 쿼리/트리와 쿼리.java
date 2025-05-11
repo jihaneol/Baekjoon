@@ -27,10 +27,13 @@ public class Main {
             tree.get(e).add(s);
         }
         searchTree(r, 0);
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < q; i++) {
             int num = Integer.parseInt(br.readLine());
-            System.out.println(dp[num]);
+            sb.append(dp[num]).append("\n");
         }
+
+        System.out.println(sb.toString());
     }
 
     private static void searchTree(int node, int parent) {
@@ -43,4 +46,6 @@ public class Main {
             dp[node] += dp[next];
         }
     }
+
+
 }
