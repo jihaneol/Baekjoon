@@ -10,6 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
         int r = Integer.parseInt(st.nextToken());
@@ -33,7 +34,8 @@ public class Main {
             sb.append(dp[num]).append("\n");
         }
 
-        System.out.println(sb.toString());
+        bw.write(sb.toString());
+        bw.flush();
     }
 
     private static void searchTree(int node, int parent) {
