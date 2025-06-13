@@ -31,12 +31,17 @@ class Solution {
         double len = stages.length;
         
         for(int i=1; i<=N; i++){
+            
             int num = failArr[i];
-            len -= failArr[i-1];
+        
+            
+            
             if(num==0){
                 list.add(new Fail(i, 0.0));
-            }else{
+            }
+            else {
                 list.add(new Fail(i, num/len));
+                len -= failArr[i]; 
             }
             
         }
