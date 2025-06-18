@@ -18,10 +18,7 @@ class Solution {
                 Stuck pre = stack.pop();
                 answer[pre.idx] = i-pre.idx;
             }
-            
-            if(stack.isEmpty() || stack.peek().price<=price){
-                stack.push(new Stuck(i, price));
-            }
+            stack.push(new Stuck(i, price));
         }
         
         // 나머지
