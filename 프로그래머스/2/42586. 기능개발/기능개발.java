@@ -18,7 +18,7 @@ class Solution {
             int s = speeds[i];
             
             dev.add(
-                (100-p)>s*((100-p)/s)? (100-p)/s + 1: (100-p)/s
+                ((100 - p) + s - 1) / s
             );
         }
         int init = dev.poll();
