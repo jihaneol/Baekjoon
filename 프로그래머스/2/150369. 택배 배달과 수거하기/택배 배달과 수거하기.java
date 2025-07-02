@@ -1,21 +1,23 @@
 class Solution {
     public long solution(int cap, int n, int[] deliveries, int[] pickups) {
+    
+        int total = 0;
+        int deltotal = 0;
+        int picktotal = 0;
         long answer = 0;
-         int delivery_cnt = 0;
-         int pickup_cnt = 0;
-        for(int i=n-1; i>-1; i--){
-
-            delivery_cnt -= deliveries[i];
-            pickup_cnt -= pickups[i];
-
-            while(delivery_cnt < 0 || pickup_cnt < 0){
-                delivery_cnt += cap;
-                pickup_cnt += cap;
-                answer+=((i+1)*2);
+        for(int i=n-1; i>=0; i--){
+            int del = deliveries[i];
+            int pick = pickups[i];
+            
+            // 배달 && 수거
+            deltotal +=del;
+            picktotal +=pick;
+            
+            while(total< deltotal || total< picktotal){
+                answer+=(i+1);
+                total+=cap;
             }
         }
-
-
-        return answer;
+        return answer*2;
     }
 }
