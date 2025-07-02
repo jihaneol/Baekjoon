@@ -1,32 +1,42 @@
 import java.util.*;
 class Solution {
-    public static int[] solution(String today, String[] terms, String[] privacies) {
-        List<Integer> list = new ArrayList<>();
-        HashMap<String, String> map = new HashMap<>();
-
-        // 약관종류
-        for (int i = 0; i < terms.length; i++) {
-            map.put(terms[i].split(" ")[0], terms[i].split(" ")[1]);
+    public int[] solution(String today, String[] terms, String[] privacies) {
+        List<Integer> answer = new ArrayList();
+       
+        int origin_day_type = ymdToInt(today);
+        
+        Map<String, Integer> term = new HashMap();
+        
+        for(String t : terms){
+            String a[] = t.split(" ");
+            term.put(a[0], Integer.parseInt(a[1])*28);
         }
 
-        int year = Integer.parseInt(today.split("\\.")[0]);
-        int month = Integer.parseInt(today.split("\\.")[1]);
-        int day = Integer.parseInt(today.split("\\.")[2]);
-
-        // 개인정보 수집일자
-        for (int i = 0; i < privacies.length; i++) {
-            String date = privacies[i].split(" ")[0];
-            int type = Integer.parseInt(map.get(privacies[i].split(" ")[1]))*28;
-
-            int num = (year - Integer.parseInt(date.split("\\.")[0]))*28*12
-                    + (month - Integer.parseInt(date.split("\\.")[1]))*28
-                    + (day - Integer.parseInt(date.split("\\.")[2]));
-
-            if (num >= type) {
-                list.add(i+1);
-            }
+        for(int i=0; i<privacies.length; i++){
+            String privacie = privacies[i];
+            
+            String info = privacie.substring(privacie.length()-1, 
+                                             privacie.length());
+            
+            String period =  privacie.substring(0, privacie.length()-2);
+            
+            
+            int comp_day_type = ymdToInt(period)+term.get(info);
+            
+            if(origin_day_type >= comp_day_type) {
+                answer.add(i+1);
+            }  
+            
         }
-
-        return list.stream().filter(i -> i != null).mapToInt(i -> i).toArray();
+        
+        return answer.stream().mapToInt(Integer::intValue).toArray();
+    }
+    public int ymdToInt(String term){
+        String[] ymd = term.split("\\.");
+        int year = Integer.parseInt(ymd[0]);
+        int month = Integer.parseInt(ymd[1]);
+        int day = Integer.parseInt(ymd[2]);
+        
+        return year*28*12 + month*28 + day;
     }
 }
