@@ -1,27 +1,27 @@
+import java.util.*;
 class Solution {
     public String[] solution(String[] s) {
-        String[] answer = new String[s.length];
+        List<String> answer = new ArrayList();
+        // 110
         StringBuilder sb = new StringBuilder();
-        //110 빼오기
-        for(int t=0; t<s.length; t++){
-            String word = s[t];
+        for(String word : s){
             sb.setLength(0);
             int cnt = 0;
             for(int i=0; i<word.length(); i++){
                 sb.append(word.charAt(i));
-                if(sb.length()>2&&sb.substring(sb.length()-3).equals("110")){
-                    sb.delete(sb.length()-3,sb.length());
+                while(sb.length()>2 && sb.substring(sb.length()-3).equals("110")){
+                    sb.delete(sb.length()-3, sb.length());
                     cnt++;
                 }
             }
-            int idx = sb.lastIndexOf("0");
+            
+            int zeroIdx = sb.lastIndexOf("0");
             while(cnt-->0){
-                sb.insert(idx+1,"110");
+                sb.insert(zeroIdx+1,"110");
             }
-            answer[t] = sb.toString();
+            answer.add(sb.toString());
         }
-        
-        
-        return answer;
+       
+        return answer.toArray(String[]::new);
     }
 }
