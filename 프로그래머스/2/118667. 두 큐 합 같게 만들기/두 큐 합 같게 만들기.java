@@ -1,46 +1,35 @@
 import java.util.*;
+import java.util.stream.*;
 class Solution {
     
     public int solution(int[] queue1, int[] queue2) {
+        
+        
+        long a = Arrays.stream(queue1).asLongStream().sum();
+        long b = Arrays.stream(queue2).asLongStream().sum();
+        int[] q = IntStream.concat(Arrays.stream(queue1), Arrays.stream(queue2))
+                          .toArray();
         int answer = 0;
-        Queue<Integer> q1 = new ArrayDeque();
-        Queue<Integer> q2 = new ArrayDeque();
-        long q1_sum = 0;
-        long q2_sum = 0;
-        for(int i=0; i<queue1.length; i++)
-        {
-            q1.add(queue1[i]);
-            q2.add(queue2[i]);
-            q1_sum+=queue1[i];
-            q2_sum+=queue2[i];
-        }
-        long target = (q1_sum+q2_sum)/2;
-        while(q1_sum != q2_sum){
-            if(answer >600000)
-            {
-                return -1;
-            }
-            while(q1_sum<target)
-            {
-                q1_sum+=q2.peek();
-                q2_sum-=q2.peek();
-                q1.add(q2.poll());
+        int i = 0;
+        int j = queue2.length;
+
+        while(i<j && j<q.length){
+   
+            if(a<b){
+                a+=q[j];
+                b-=q[j];
+                j++;
                 answer++;
-            }
-            while(q2_sum<target)
-            {
-                q2_sum+=q1.peek();
-                q1_sum-=q1.peek();
-                q2.add(q1.poll());
+            }else if(a>b){
+                b+=q[i];
+                a-=q[i];
+                i++;
                 answer++;
-            }
-            if(q1_sum == q2_sum)
-            {
-                return answer;
+            }else {
+                break;
             }
         }
         
-        
-        return answer;
+        return a==b? answer : -1;
     }
 }
