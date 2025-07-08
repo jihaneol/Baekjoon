@@ -1,33 +1,38 @@
+import java.util.*;
 class Solution {
     public int solution(int[] diffs, int[] times, long limit) {
-        int answer = 0;
-        int s=1;
-        int e=100000;
-       
-        while(s<=e){
-            long sum = 0;
-            int level = (s+e)/2;
-            boolean isSolve = true;
+     
+        // diff = 현재 퍼즐 난이도, time_cur = 현재 퍼즐 소요 시간, lv = 내 숙련도
+        int s = 1;
+        int e = Arrays.stream(diffs).max().orElse(0);
+        
+        while(s<e){
+            int lv = (s+e)/2;
+            int time_prev = 0;
+            long total_time = 0;
             for(int i=0; i<diffs.length; i++){
-                if(diffs[i]<=level){
-                    sum+=times[i];
-                }else{
-                    sum+=(times[i]+times[i-1])*(diffs[i]-level)+times[i];
-                }
+                int diff = diffs[i];
+                int time_cur = times[i];
                 
-                if(limit<sum){
-                    isSolve = false;
-                    break;
+                if(diff <= lv) {
+                    total_time += time_cur;
+                }else{
+                    total_time += (diff - lv)*(time_cur + time_prev) + time_cur;
                 }
-            }
-            if(isSolve){
-                answer = level;
-                e= level-1;
-            }else{
-                s= level+1;
+                time_prev = time_cur;
             }
             
+            // limit 넘어 가면 lv 키우기
+            if(total_time>limit){
+                s = lv+1;
+            }else{
+            
+                e = lv;
+            }
+            
+            
         }
-        return answer;
+        
+        return s;
     }
 }
