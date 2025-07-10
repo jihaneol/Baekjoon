@@ -33,12 +33,9 @@ class Solution {
                 }
             }
         }
-        int result = 0;
         
-        for(int i : sumArr){
-            if(result<i) result = i;
-        }
-        return result;
+        
+        return Arrays.stream(sumArr).max().orElse(0);
     }
     public int bfs(int x, int y, int[][] land, int num){
         Queue<int[]> q = new ArrayDeque();
