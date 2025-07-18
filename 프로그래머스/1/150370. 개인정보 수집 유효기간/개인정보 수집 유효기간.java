@@ -1,42 +1,31 @@
 import java.util.*;
 class Solution {
     public int[] solution(String today, String[] terms, String[] privacies) {
+        Map<String, Integer> termMap = new HashMap();
+        for(String term : terms){
+            String[] split = term.split(" ");
+            termMap.put(split[0], Integer.parseInt(split[1])*28);
+        }
+        
+        int now = dayToInt(today);
         List<Integer> answer = new ArrayList();
-       
-        int origin_day_type = ymdToInt(today);
-        
-        Map<String, Integer> term = new HashMap();
-        
-        for(String t : terms){
-            String a[] = t.split(" ");
-            term.put(a[0], Integer.parseInt(a[1])*28);
-        }
-
         for(int i=0; i<privacies.length; i++){
-            String privacie = privacies[i];
-            
-            String info = privacie.substring(privacie.length()-1, 
-                                             privacie.length());
-            
-            String period =  privacie.substring(0, privacie.length()-2);
-            
-            
-            int comp_day_type = ymdToInt(period)+term.get(info);
-            
-            if(origin_day_type >= comp_day_type) {
+            String[] privacie = privacies[i].split(" ");
+            int ymd = dayToInt(privacie[0]);
+            if(now >= ymd + termMap.get(privacie[1])){
                 answer.add(i+1);
-            }  
-            
+            }
         }
+        
         
         return answer.stream().mapToInt(Integer::intValue).toArray();
     }
-    public int ymdToInt(String term){
-        String[] ymd = term.split("\\.");
-        int year = Integer.parseInt(ymd[0]);
-        int month = Integer.parseInt(ymd[1]);
-        int day = Integer.parseInt(ymd[2]);
+    public int dayToInt(String today){
+        String[] ymd = today.split("\\.");
         
-        return year*28*12 + month*28 + day;
+        int y = Integer.parseInt(ymd[0])*28*12;
+        int m = Integer.parseInt(ymd[1])*28;
+        int d = Integer.parseInt(ymd[2]);
+        return y+m+d;
     }
 }
