@@ -1,44 +1,62 @@
 import java.util.*;
+class Info{
+        int sheep, wolf, node;
+        Set<Integer> set; // 이동할 경로
+        Info(int node, int s, int w, Set<Integer> set){
+            this.node = node;
+            this.sheep = s;
+            this.wolf = w;
+            this.set = set;
+        }
+    }
 class Solution {
-    int max = 0;
-    int n,answer;
-    int[] copyinfo;
-    boolean[][] visited;
-    List<List<Integer>> tree = new ArrayList();
+    private List<List<Integer>> tree = new ArrayList();
     public int solution(int[] info, int[][] edges) {
-        n = info.length;
-        copyinfo = info;
-        answer = 0;
-        visited = new boolean[2<<n][n];
+        int n = info.length;
+        
         for(int i=0; i<n; i++){
             tree.add(new ArrayList());
         }
         for(int[] edge : edges){
-            int s  = edge[0];
-            int e  = edge[1];
-            tree.get(s).add(e);
-            tree.get(e).add(s);
+            tree.get(edge[0]).add(edge[1]);
         }
-        find(0,0,0,0);
-        return answer;
-    }
-    private void find(int key , int scnt, int wcnt, int now){
-      
-        if(visited[key][now]) return;
-        visited[key][now] = true;
-        // key check
-        if((key & (1<<now)) == 0){
-            if(copyinfo[now]==0){
-                scnt++;
-                answer = Math.max(answer, scnt);
+        
+        Queue<Info> q = new ArrayDeque();
+        q.add(new Info(0,0,0,new HashSet()));
+        int maxSheep = 0;
+        
+        while(!q.isEmpty()){
+            Info now = q.poll();
+            
+            if(info[now.node]==0){
+                now.sheep++;
+                if(maxSheep<now.sheep){
+                    maxSheep = now.sheep;
+                }
             }else{
-                wcnt++;
+                now.wolf++;
             }
-            key = key | 1<<now;
+            
+            if(now.sheep <= now.wolf){
+                continue;
+            }
+            
+            // 경로 갱신
+            for(int next : tree.get(now.node)){
+                now.set.add(next);
+            }
+            
+            // q에 넣기
+            for(Integer next : now.set){
+                Set<Integer> route = new HashSet();
+                
+                route.addAll(now.set);
+                route.remove(next);
+                
+                q.add(new Info(next, now.sheep, now.wolf, route));
+            }
         }
-        if(scnt <=wcnt) return;
-        for(int next : tree.get(now)){
-            find(key,scnt,wcnt,next);
-        }
+      
+        return maxSheep;
     }
 }
