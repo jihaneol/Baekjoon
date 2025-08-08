@@ -21,44 +21,28 @@ class Solution {
             scoreMap.put(b, scoreMap.get(b)-1);
         }
         int n = friends.length;
-        int[] answer = new int[n];
-        for(int i=0; i<n-1; i++){
-            for(int j=i+1; j<n; j++){
+        int answer = 0;
+        for(int i=0; i<n; i++){
+            int sum = 0;
+            for(int j=0; j<n; j++){
+                if(i==j) continue;
                 String a = friends[i];
                 String b = friends[j];
                 
                 // 기록이 있는지 확인
                 int relation_a = relationMap.getOrDefault(a+" "+b,-1);
                 int relation_b = relationMap.getOrDefault(b+" "+a,-1);
-                if(relation_a!=-1 || relation_b!=-1){ // 기록이 있다.
-            
-                    if(relation_a>relation_b) answer[i]++;
-                    else if(relation_b>relation_a) answer[j]++;
-                    else{
-                         int score_a = scoreMap.get(a);
-                            int score_b = scoreMap.get(b);
-                            if(score_a>score_b){
-                                answer[i]++;
-                            }else if(score_b>score_a){
-                                answer[j]++;
-                            }
-                    }
-                }else{
-                      // 기록이 없다면 지수확인..
-                // 지수 확인
                 int score_a = scoreMap.get(a);
                 int score_b = scoreMap.get(b);
-                if(score_a>score_b){
-                    answer[i]++;
-                }else if(score_a<score_b){
-                    answer[j]++;
+                
+                if(relation_a>relation_b || (relation_a==relation_b && score_a>score_b)){
+                    sum++;
                 }
-                }
-              
             }
+            answer = Math.max(answer, sum);
         }
     
    
-        return Arrays.stream(answer).max().orElse(-1);
+        return answer;
     }
 }
