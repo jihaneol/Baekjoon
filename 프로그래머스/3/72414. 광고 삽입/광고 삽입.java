@@ -1,83 +1,60 @@
-
 class Solution {
     public String solution(String play_time, String adv_time, String[] logs) {
-        int play = convertTime(play_time);
-        int e = convertTime(adv_time);
-        int s = 0;
+        // 36만이하 sliding window 하면 되겠는데.. 0~내 길이 adv_time
+        // -> 끝까지 해서  가장큰 시작위치 찾으면 끝..
+        int n = timeToInt(play_time);
+        int len = timeToInt(adv_time);
+        int[] playArr = new int[n+1];
         
-        int[] playTimeArr = new int[play+2];
-        
+        // 로그 길이 30만
         for(String log : logs){
-            String[] temp = log.split("-");
-            int s_log = convertTime(temp[0]);
-            int e_log = convertTime(temp[1]);
-            
-            playTimeArr[s_log]++;
-            playTimeArr[e_log]--;
+            String[] split = log.split("-");
+            int s = timeToInt(split[0]);
+            int e = timeToInt(split[1]);
+            playArr[s]++;
+            playArr[e]--;
         }
         
-        for(int i=1; i<play+1; i++){
-            playTimeArr[i] +=playTimeArr[i-1];
+        for(int i=1; i<=n; i++){
+            playArr[i] +=playArr[i-1];
         }
-        long total = 0;
-        int adv_start_anser = 0;
-        //초기
-        for(int i=0; i<=e; i++){
-            total+=playTimeArr[i];
-        }
-        long max = total;
         
-        // 슬라이딩
-        for(int i=e; i<play; i++){
-            total-=playTimeArr[i-e];
-            total+=playTimeArr[i];
+      
+        int s_max = 0; // 공익 광고 시작 시간
+        long pre = 0; // 이전 최대 시간
+        for(int i=0; i<len; i++){
+            pre+=playArr[i];
+        }
+        long max = pre; // 공익 광고 최대 시간
+        
+        // 슬라이딩 윈도우
+        for(int s=1; s<=n-len; s++){
+            int e = s+len;
+            long now = pre-playArr[s-1] + playArr[e-1]; 
             
-            if(max<total){
-                max = total;
-                adv_start_anser = i-e+1;
+            if(now>max){
+                max=now;
+                s_max = s;
             }
+            pre = now;
         }
-
-        return convertString(adv_start_anser);
+        
+        return intToTime(s_max);
     }
-    private int convertTime(String now){
-        String[] time = now.split(":");
-        int hour = Integer.parseInt(time[0])*3600;
-        int minute = Integer.parseInt(time[1])*60;
-        int sec = Integer.parseInt(time[2]);
-        return hour + minute + sec;
+    public int timeToInt(String time){
+        String[] split = time.split(":");
+        int h = Integer.parseInt(split[0]) * 60 * 60;
+        int m = Integer.parseInt(split[1]) * 60;
+        int s = Integer.parseInt(split[2]);
+        
+        return h + m + s;
     }
-    
-    private String convertString(int time){
-        StringBuilder sb = new StringBuilder();
-        int hour = time/3600;
+    public String intToTime(int time){
+        int h = time/3600;
         time%=3600;
-        int minute = time/60;
-        time%=60;
-        int sec = time;
-        if(check(hour)){
-            sb.append(hour);
-        }else{
-            sb.append(0).append(hour);
-        }
-        sb.append(":");
+        int m = time/60;
+        int s = time%60;
         
-         if(check(minute)){
-            sb.append(minute);
-        }else{
-            sb.append(0).append(minute);
-        }
-          sb.append(":");
-        
-         if(check(sec)){
-            sb.append(sec);
-        }else{
-            sb.append(0).append(sec);
-        }
-        return sb.toString();
-    }
-    private boolean check(int time){
-        if(time<10) return false;
-        return true;
+        return String.format("%02d:%02d:%02d",h,m,s);
     }
 }
