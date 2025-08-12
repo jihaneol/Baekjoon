@@ -1,73 +1,67 @@
 import java.util.*;
-
 class Solution {
-    private int[] dx = {0,0,1,-1};
-    private int[] dy = {1,-1,0,0};
+    private int answer,n,m;
     private char[][] map;
-    private int n, m, answer;
+    private int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
     public int solution(String[] storage, String[] requests) {
-   
-        n = storage.length+2;
-        m = storage[0].length()+2;
-        map = new char[n][m];
-        answer = (n-2)*(m-2);
-        for(int i=0; i<n; i++){
-            for(int j=0; j<m; j++){
-                map[i][j] = '0';
-            }
-        }
         
-        for(int i=1; i<n-1; i++){
-            for(int j=1; j<m-1; j++){
-                map[i][j] = storage[i-1].charAt(j-1);
+        n=storage.length;
+        m=storage[0].length();
+        answer = n*m;
+        // bfs 로 밖았 처리. 그냥 처리
+        map = new char[n+2][m+2];
+        for(int i=1; i<=n; i++){
+            String s = storage[i-1];
+            for(int j=1; j<=m; j++){
+                map[i][j] = s.charAt(j-1);
             }
         }
         
         for(String request : requests){
-            bfs(request.length(), request.charAt(0));            
-        }
-        return answer;
-    }
-    private void bfs(int len, char target){
-        
-        Queue<int[]> q = new LinkedList();
-        q.add(new int[] {0,0});
-        if(len==2){
-            for(int i=1; i<n-1; i++){
-                for(int j=1; j<m-1; j++){
-                    if(map[i][j]==target) {
-                        map[i][j]='0';
-                        answer--;
+            if(request.length()==1){
+                bfs(request.charAt(0));    
+            }else{
+                for(int i=1; i<=n; i++){
+                    for(int j=1; j<=m; j++){
+                        if(map[i][j]==request.charAt(0)){
+                            map[i][j]='x';
+                            answer--;
+                        }
                     }
                 }
             }
-        }else{
-            
-            
-            boolean[][] v = new boolean[n][m];
-            while(!q.isEmpty()){
-                int[] now = q.poll();
-                
-                for(int i=0; i<4; i++){
-                    int nx = dx[i] + now[0];
-                    int ny = dy[i] + now[1];
-                    if(nx<0||ny<0||nx>=n||ny>=m||v[nx][ny]) continue;
-
-                    v[nx][ny] = true;
-                    
-                    if(map[nx][ny]=='0') q.add(new int[] {nx,ny});
-                    
-                    if(map[nx][ny]==target) {
-                        map[nx][ny] = '0';
-                        answer--;
-                    }
-                 }
-            }
-           
-            
-            
         }
+     
+        return answer;
+    
+    }
+    public void bfs(char target){
+        // map -0 == 0 이면 아무 것도 없는것. add
+        // !=0 이면 target과 일치하면 성공 add
+        // 지나온 길 true로..  
+        boolean[][] visited = new boolean[n+2][m+2];
+        Queue<int[]> q = new ArrayDeque();
+        q.add(new int[]{0,0});
+        visited[0][0] = true;
+        while(!q.isEmpty()){
+            int[] now = q.poll();
+            for(int[] d : dir){
+                int nx = d[0] + now[0];
+                int ny = d[1] + now[1];
+                if(nx<0 || ny<0 || nx>=n+2 || ny>=m+2) continue;
+                if(visited[nx][ny]) continue;
+                visited[nx][ny] = true;
+                if(map[nx][ny]!='x' && map[nx][ny]-0!=0 && 
+                   map[nx][ny]!=target) continue;
+                
+                if(map[nx][ny]==target){
+                    answer--;
+                    map[nx][ny]='x';
+                }else{
+                    q.add(new int[]{nx,ny});
+                }
+            }
+        }
+   
     }
 }
-
-
