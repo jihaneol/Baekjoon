@@ -2,7 +2,7 @@ import java.util.*;
 class Solution {
     private int answer, n;
     private Integer[] dp;
-    private int MAX = 10111111;
+    private int MAX = 20001;
     private Set<String> set = new HashSet();
     public int solution(String[] strs, String t) {
         n = t.length();
