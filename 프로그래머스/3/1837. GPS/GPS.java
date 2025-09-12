@@ -1,7 +1,7 @@
 import java.util.*;
 class Solution {
     public int solution(int n, int m, int[][] edge_list, int k, int[] gps_log) {
-        int INF = 10001;
+        int INF = 101;
         int[][] dp = new int[n+1][k]; // [정점, 시간];
         for(int[] arr : dp){
             Arrays.fill(arr,INF);
@@ -35,6 +35,7 @@ class Solution {
             }
         }
 
+     
     
         
         return dp[gps_log[k-1]][k-1]==INF ? -1 : dp[gps_log[k-1]][k-1];
