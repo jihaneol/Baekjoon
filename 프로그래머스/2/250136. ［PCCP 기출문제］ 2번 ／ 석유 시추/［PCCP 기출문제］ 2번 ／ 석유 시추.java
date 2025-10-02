@@ -1,63 +1,73 @@
 import java.util.*;
 
 class Solution {
-    private Map<Integer, Integer> map = new HashMap(); // 시추 번호, 총량
-    private int[][] dir = {{1,0},{-1,0},{0,1},{0,-1}};
-    private int n,m;
+    private int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
+    private boolean[][] visited;
+    private Map<Integer, Integer> map = new HashMap();
+    private int n, m;
     public int solution(int[][] land) {
-      
-        // 가장 많이 뽑을 수 있는 시추관 찾기. 250_000
+        int answer = 0;
         n = land.length;
         m = land[0].length;
-        int num = 1; // 시추 번호
-        int[] sumArr = new int[m]; // 시추 뚫었을 때 얻을 수 있는 용량
-        Set<Integer>[] set = new Set[m]; // 시추 중복 제거 및 확인용
-        for(int i=0; i<m; i++){
-            set[i] = new HashSet();
-        }
-            
-        for(int i=0; i<n; i++){
-            for(int j=0; j<m; j++){
-                if(land[i][j]==1){
-                    // 시추하기
-                    int total = bfs(i,j,land, ++num);
-                    set[j].add(num);
-                    sumArr[j] += total;
-                }else if(land[i][j]>1){
-                    int now = land[i][j]; // 현재 시추 번호
-                    // 총량 저장하기
-                    if(!set[j].contains(now)){
-                        sumArr[j]+= map.get(now);
-                        set[j].add(now);
+        int no = 1; // 석유번호
+
+        
+        // 석유 표시 땅
+        // 석유량 표시한 map
+        // 파면서 확인하자.
+        
+        for(int j=0; j<m; j++){
+            int total = 0; // 석유량
+            Set<Integer> set = new HashSet(); // 팠던 석유인지 확인용
+            for(int i=0; i<n; i++){
+                int oilNo = land[i][j];
+                if(oilNo!=0){
+                    
+                    // 측정한 석유가 없다면 측정하기.
+                    if(!map.containsKey(oilNo)){
+                        bfs(i,j,++no,land);
                     }
+                    
+                    oilNo = land[i][j];
+                    
+                    // 이미 포함한 석유인지 확인
+                    if(set.contains(oilNo)) continue;
+                    
+                    set.add(oilNo);
+                    total += map.get(oilNo);
+                    
                 }
             }
+            answer = Math.max(total, answer);
         }
         
         
-        return Arrays.stream(sumArr).max().orElse(0);
+        
+        return answer;
     }
-    public int bfs(int x, int y, int[][] land, int num){
+    private void bfs(int x, int y, int no, int[][] land){
         Queue<int[]> q = new ArrayDeque();
-        q.add(new int[]{x,y});
-        land[x][y] = num;
         int total = 1;
+        q.add(new int[]{x,y});
+        land[x][y] = no;
         
         while(!q.isEmpty()){
             int[] now = q.poll();
-            for(int i=0; i<4; i++){
-                int nx = now[0] + dir[i][0];
-                int ny = now[1] + dir[i][1];
+            
+            for(int[] d : dir){
+                int nx = now[0] + d[0];
+                int ny = now[1] + d[1];
+                
                 if(nx<0 || ny<0 || nx>=n || ny>=m) continue;
-                if(land[nx][ny]==1){
-                    land[nx][ny] = num;
-                    total++;
-                    q.add(new int[] {nx,ny});
-                }
+                
+                if(land[nx][ny]!=1) continue;
+                
+                q.add(new int[]{nx, ny});
+                land[nx][ny] = no;
+                total++;
             }
         }
-        map.put(num, total);
-        return total;
+        
+        map.put(no, total);
     }
 }
-
