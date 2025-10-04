@@ -1,61 +1,74 @@
 import java.util.*;
-class Solution {
-    private Map<Integer, Integer> edgeMap = new HashMap();
-    private Map<Integer, List<Integer>> treeMap = new HashMap();
-    private Set<Integer> visited = new HashSet();
-    
-    public int[] solution(int[] nodes, int[][] edges) {
-        int[] answer = new int[2];
-        
-        for(int n : nodes){
-            treeMap.put(n, new ArrayList());
-            edgeMap.put(n, 0);
+class Visiter{
+    private int oddNode; // 홀수 -> 역홀
+    private int evenNode; // 짝수 -> 역짝
+    private int inverseOddNode; //역홀 -> 홀수
+    private int inverseEvenNode; // 역짝 -> 짝수
+
+    public void setNode(int root, int num){
+        int a = root%2;
+        int b = num%2;
+        if(a==0 && b==0){
+            evenNode++;
         }
-        
-        for(int[] edge : edges){
-            int s = edge[0];
-            int e = edge[1];
-            edgeMap.put(s, edgeMap.get(s)+1);
-            edgeMap.put(e, edgeMap.get(e)+1);
-            treeMap.get(s).add(e);
-            treeMap.get(e).add(s);
+        else if(a!=0 && b!=0){
+            oddNode++;
         }
-        
-        for(int n : nodes){
-            if(visited.contains(n)) continue;
-            visited.add(n);
-            checkedTree(n, answer); 
+        else if(a!=0 && b==0){
+            inverseOddNode++;
         }
-        
-        return answer;
-    }
-    private void checkedTree(int start, int[] answer){
-        
-        int[] target = new int[2];
-        
-        Queue<Integer> q = new ArrayDeque();
-        
-        q.add(start);
-        
-        while(!q.isEmpty()){
-            int now = q.poll();
-            
-            // 현재 연결수 확인하기.
-            int edge = edgeMap.get(now);
-            
-            int type = Math.abs(now-edge)%2==0?0:1; // 짝홀:0, 역짝홀:1;
-            target[type]++;
-            
-            for(int next : treeMap.get(now)){
-                if(visited.contains(next)) continue;
-                visited.add(next);
-                q.add(next);
-            }
-        }
-        
-        if(target[0]==1) answer[0]++;
-        if(target[1]==1) answer[1]++;
-        
+        else inverseEvenNode++;
     }
 
+    public int getOddEvenTreeCnt(){
+        if((oddNode==1 && evenNode==0) || (oddNode==0 && evenNode==1))
+            return 1;
+        return 0;
+    }
+
+    public int getInverseTreeCnt(){
+        if((inverseOddNode==1 && inverseEvenNode==0) || 
+           (inverseOddNode==0 && inverseEvenNode==1))
+            return 1;
+        return 0;
+    }
+}
+class Solution {
+    private int[] answer = new int[2];
+    private Set<Integer> visited = new HashSet();
+    private Map<Integer, List<Integer>> tree = new HashMap();
+
+    public int[] solution(int[] nodes, int[][] edges) {
+
+        for(int node : nodes){
+            tree.put(node, new ArrayList());
+        }
+
+        for(int[] edge : edges){
+            tree.get(edge[0]).add(edge[1]);
+            tree.get(edge[1]).add(edge[0]);
+        }
+
+        for(int node : nodes){
+            if(visited.contains(node)) continue;
+            visited.add(node);
+            Visiter visiter = new Visiter();
+            dfs(node, visiter);
+            answer[0] += visiter.getOddEvenTreeCnt();
+            answer[1] += visiter.getInverseTreeCnt();
+        }
+
+        return answer;
+    }
+    private void dfs(int now, Visiter visiter){
+        int cnt = 0;
+        for(int next : tree.get(now)){
+            cnt++;
+            if(visited.contains(next)) continue;
+            visited.add(next);
+            dfs(next, visiter);
+        }
+
+        visiter.setNode(now, cnt);
+    }
 }
