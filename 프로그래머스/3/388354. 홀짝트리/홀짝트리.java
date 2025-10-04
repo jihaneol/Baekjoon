@@ -3,6 +3,7 @@ class Solution {
     private Map<Integer, Integer> edgeMap = new HashMap();
     private Map<Integer, List<Integer>> treeMap = new HashMap();
     private Set<Integer> visited = new HashSet();
+    
     public int[] solution(int[] nodes, int[][] edges) {
         int[] answer = new int[2];
         
@@ -23,7 +24,6 @@ class Solution {
         for(int n : nodes){
             if(visited.contains(n)) continue;
             visited.add(n);
-            
             checkedTree(n, answer); 
         }
         
@@ -43,25 +43,19 @@ class Solution {
             // 현재 연결수 확인하기.
             int edge = edgeMap.get(now);
             
-            int type = getTreeType(now, edge); // 짝홀:0, 역짝홀:1;
+            int type = Math.abs(now-edge)%2==0?0:1; // 짝홀:0, 역짝홀:1;
             target[type]++;
             
             for(int next : treeMap.get(now)){
                 if(visited.contains(next)) continue;
                 visited.add(next);
-                
                 q.add(next);
             }
-            
         }
+        
         if(target[0]==1) answer[0]++;
         if(target[1]==1) answer[1]++;
         
     }
-    
-    private int getTreeType(int node, int edge){
-        // 2-4 = 2 , 1 - 4 = 3
-        return Math.abs(node-edge)%2==0?0:1;
-    }
-  
+
 }
