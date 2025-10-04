@@ -1,29 +1,24 @@
-import java.util.*;
-
-public class Solution {
-
-    
+class Solution {
     public int solution(int[] bandage, int health, int[][] attacks) {
-        
-        int now = 0; // 현재시간
-        int cnt = 0; //연속 성공 횟수
-        int nowHealth = health;
+       
+        int startTime = 0;
+        int totalHealth = health;
         for(int[] attack : attacks){
+            int seq = attack[0] - startTime-1;
             
-            int diff = attack[0] - now -1; //시간차이
-            cnt = diff/bandage[0]; // 연속 횟수
+            // 초당 회복, 추가 회복 
+            health = (health + (seq/bandage[0])*bandage[2] + seq*bandage[1]) > totalHealth 
+                ? totalHealth : (health + (seq/bandage[0])*bandage[2] + seq*bandage[1]);
             
-            // 회복
-            nowHealth = Math.min(health,cnt*bandage[2] + nowHealth); //추가
-            nowHealth = Math.min(health,diff*bandage[1] + nowHealth); //초당 회복
-            // 공격 당함
-            now = attack[0];
-            nowHealth-=attack[1];
+            // 공격
+            health -= attack[1];
             
-            if(nowHealth<=0) return -1;
+            if(health<=0) return -1;
+            
+            // 시작 시간 갱신
+            startTime = attack[0];
         }
         
-        return nowHealth;
+        return health;
     }
-
 }
