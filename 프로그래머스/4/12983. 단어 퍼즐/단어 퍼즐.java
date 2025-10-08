@@ -1,36 +1,28 @@
 import java.util.*;
 class Solution {
-    private int answer, n;
-    private Integer[] dp;
-    private int MAX = 20001;
-    private Set<String> set = new HashSet();
     public int solution(String[] strs, String t) {
-        n = t.length();
-        dp = new Integer[n];
-        for(String s : strs){
-            set.add(s);
+        Set<String> strSet = new HashSet();
+        for(String str : strs){
+            strSet.add(str);
         }
-        dfs(t, 0);
-
-        return dp[0]==MAX? -1 : dp[0];
-    }
-    private int dfs(String t, int s){
-        if(n==s) return 0;
         
-        if(dp[s]!=null){
-            return dp[s];
-        }
-        dp[s] = MAX;
+        int n = t.length();
+        int[] dp = new int[n+1];
         
-        for(int e=s+1; e<=n && e<=s+5; e++){
-           
-            String sub = t.substring(s,e);
-            
-            if(set.contains(sub)){
-                dp[s] = Math.min(dfs(t,e)+1,dp[s]);
+        Arrays.fill(dp,10000000);
+        dp[0] = 0;
+        
+        for(int i=0; i<n; i++){
+            for(int j=1; j<=5 && j+i<=n; j++){
+                String sub = t.substring(i,i+j);
+                if(strSet.contains(sub)){
+                // System.out.println(sub);
+                    dp[i+j] = Math.min(dp[i+j], dp[i] + 1);
+                }
             }
         }
         
-        return dp[s];
+        
+        return dp[n]==10000000?-1:dp[n];
     }
 }
