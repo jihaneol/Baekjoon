@@ -16,7 +16,7 @@ class Solution {
     private int[][] dir = {{1,0},{-1,0},{0,1},{0,-1}};
     public int solution(int[][] points, int[][] routes) {
         int answer = 0;
-        int m = routes[0].length; // next 가 m을 넘으면 끝
+        int m = routes[0].length; 
         Queue<Robot> q = new ArrayDeque();
         int[][] map = new int[101][101];
         for(int id=0; id<routes.length; id++){
@@ -24,17 +24,17 @@ class Solution {
             int[] point = points[route[0]-1];
             int x = point[0];
             int y = point[1];
-            
+
             q.add(new Robot(x, y, id));
-            map[x][y]++;
         }
         
         while(!q.isEmpty()){
             int size = q.size();
             // 충돌 계산
-            answer+=clushCal(map);
+            answer+=clushCal(map, q);
             while(size-->0){
                 Robot now = q.poll();    
+                map[now.x][now.y]--;
                 if(now.next >=m) continue;
                 
                 for(int[] d : dir){
@@ -51,7 +51,6 @@ class Solution {
                         if(nextDir == 0){
                             now.next++;
                         }
-                        map[nx][ny]++;
                         now.setDir(nx,ny);
                         q.add(now);
                         break;
@@ -62,15 +61,11 @@ class Solution {
         
         return answer;
     }
-    private int clushCal(int[][] map){
+    private int clushCal(int[][] map,Queue<Robot> q){
         int result = 0;
-        for(int i=1; i<101; i++){
-            for(int j=1; j<101; j++){
-                if(map[i][j]>1){
-                    result++;
-                }
-                map[i][j] = 0;
-            }
+        for(Robot now : q){
+            map[now.x][now.y]++;
+            if(map[now.x][now.y]==2) result++;
         }
     return result;
     }
