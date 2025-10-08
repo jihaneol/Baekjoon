@@ -1,101 +1,88 @@
-import java.util.*;
 class Solution {
-    class Pos {
+    class Pos{
         int x, y;
         Pos(int x, int y){
             this.x = x;
             this.y = y;
         }
     }
-    private boolean red_arrive, blue_arrive;
     private int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
-    private int n, m, answer;
-    private boolean[][][] visited; // [0] 는 red, [1] 는 blue
-    private int red_x, red_y, blue_x, blue_y;
-    private int[][] g_maze;
+    private boolean[][][] visited;
+    private int n, m;
+    private int[][] maze;
+    private boolean isRedEnd, isBlueEnd;
     public int solution(int[][] maze) {
-        g_maze = maze;
-        answer = 21;
+
         n = maze.length;
         m = maze[0].length;
-        
         visited = new boolean[n][m][2];
-        
+        this.maze = maze;
         Pos red = null;
         Pos blue = null;
+        
         for(int i=0; i<n; i++){
             for(int j=0; j<m; j++){
                 if(maze[i][j]==1){
                     red = new Pos(i,j);
+                    visited[i][j][0] = true;
                 }else if(maze[i][j]==2){
                     blue = new Pos(i,j);
-                }else if(maze[i][j]==3){
-                    red_x = i;
-                    red_y = j;
-                }else if(maze[i][j]==4){
-                    blue_x = i;
-                    blue_y = j;
+                    visited[i][j][1] = true;
                 }
             }
         }
-        visited[red.x][red.y][0] = true;
-        visited[blue.x][blue.y][1] = true;
-        move(red.x, red.y, blue.x, blue.y, 0);
-        
-        // 어떻게 도착이 풀리는지 알지?
-        
-        return answer==21?0:answer;
+        int answer = dfs(red,blue,0);
+        return answer==21? 0:answer;
     }
-    
-    private void move(int rx, int ry, int bx, int by, int round){
-      
-    
+    private int dfs(Pos red, Pos blue, int depth){
         
-        if(blue_arrive && red_arrive){
-            answer = Math.min(answer, round);
-            return;
+        if(isRedEnd && isBlueEnd){
+            return depth;
         }
         
+        int result = 21;
+        
         for(int i=0; i<4; i++){
-            Pos nextRed = red_arrive? new Pos(rx, ry) : new Pos(rx+dir[i][0], ry+dir[i][1]);
+            Pos nextRed = isRedEnd? red : new Pos(red.x+dir[i][0], red.y+dir[i][1]);
             for(int j=0; j<4; j++){
-                Pos nextBlue = blue_arrive? new Pos(bx,by) : new Pos(bx+dir[j][0], by+dir[j][1]);
+                Pos nextBlue = isBlueEnd
+                    ? blue : new Pos(blue.x+dir[j][0], blue.y+dir[j][1]);
                 
-                if(!validate(new Pos(rx,ry), new Pos(bx,by), nextRed, nextBlue)) continue;
+                if(!validate(red, blue, nextRed, nextBlue)) continue;
                 
-                if(!red_arrive && visited[nextRed.x][nextRed.y][0]) continue;
-                if(!blue_arrive && visited[nextBlue.x][nextBlue.y][1]) continue;
-                
-                if(g_maze[nextRed.x][nextRed.y] == 3) red_arrive = true;
-                if(g_maze[nextBlue.x][nextBlue.y] == 4) blue_arrive = true;
-                
+                if(maze[nextRed.x][nextRed.y]==3) isRedEnd = true;
+                if(maze[nextBlue.x][nextBlue.y]==4) isBlueEnd = true;
                 
                 visited[nextRed.x][nextRed.y][0] = true;
                 visited[nextBlue.x][nextBlue.y][1] = true;
-                move(nextRed.x, nextRed.y, nextBlue.x, nextBlue.y, round+1);
-                visited[nextRed.x][nextRed.y][0] = false;
-                visited[nextBlue.x][nextBlue.y][1] = false;  
                 
-                red_arrive = false;
-                blue_arrive = false;
+                result = Math.min(result,dfs(nextRed, nextBlue, depth+1));
+                    
+                isRedEnd = false;
+                isBlueEnd = false;
+                
+                visited[nextRed.x][nextRed.y][0] = false;
+                visited[nextBlue.x][nextBlue.y][1] = false;
             }
         }
         
-       
-        
+        return result;
     }
-    private boolean validate(Pos preRed, Pos preBlue, Pos red, Pos blue){
-        // 벽 또는 격자 밖 안된다.
-        if(red.x<0 || red.x>=n || blue.x<0 || blue.x>=n ||
-          blue.y<0 || blue.y>=m || red.y<0 || red.y>=m) return false;
+    private boolean validate(Pos red, Pos blue, Pos nRed, Pos nBlue){
         
-        if(g_maze[red.x][red.y]==5 || g_maze[blue.x][blue.y]==5) return false;
+        if(nRed.x<0 || nRed.y<0 || nBlue.x<0 || nBlue.y<0 ||
+          nRed.x>=n || nRed.y>=m || nBlue.x>=n || nBlue.y>=m) return false;
         
-        // 동시에 두 수레를 같은 칸으로 움직 X
-        if(red.x==blue.x && red.y==blue.y) return false;
         
-        // 수레끼리 자리를 바꾸면 안된다.
-        if(preRed.x==blue.x && preRed.y==blue.y && preBlue.x==red.x && preBlue.y==red.y) return false;
+        if(maze[nRed.x][nRed.y]==5 || maze[nBlue.x][nBlue.y]==5) return false;
+        
+        if(!isRedEnd && visited[nRed.x][nRed.y][0]) return false;
+        if(!isBlueEnd && visited[nBlue.x][nBlue.y][1]) return false;
+        
+        if(nRed.x==nBlue.x && nRed.y==nBlue.y) return false;
+        
+        if(nRed.x==blue.x && nRed.y==blue.y &&
+          nBlue.x==red.x && nBlue.y==red.y) return false;
         
         return true;
     }
