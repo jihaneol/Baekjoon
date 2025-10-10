@@ -1,147 +1,103 @@
 import java.util.*;
-
-// 간선 정보를 저장하는 클래스
-class Edge {
-    // 목적지 노드
-    int vertex;
-    // 목적지 노드 까지의 거리
-    int weight;
-    // 뒤집어진 간선인지 여부
-    boolean isReverse;
-
-    public Edge(int vertex, int weight, boolean isReverse) {
-        this.vertex = vertex;
-        this.weight = weight;
-        this.isReverse = isReverse;
-    }
-}
-
-// 우선순위 큐에 삽입되는 노드 클래스
-class Node implements Comparable<Node> {
-    // 현재 노드
-    int vertex;
-    // 시작 ~ 현재 노드의 경로
-    int weight;
-    // 현재 트랩의 활성 상태
-    int trapStatus;
-
-    public Node(int vertex, int weight, int trapStatus) {
-        this.vertex = vertex;
-        this.weight = weight;
-        this.trapStatus = trapStatus;
-    }
-
-    @Override
-    public int compareTo(Node node) {
-        return this.weight > node.weight ? 1 : -1;
-    }
-}
 class Solution {
-    static int INF = 100000000;
-    Map<Integer, Integer> trapMap = new HashMap<>();
+    class Node {
+        int vertex;
+        int value;
+        int trapBit;
+        Node(int vertex, int value, int trapBit){
+            this.vertex = vertex;
+            this.value = value;
+            this.trapBit = trapBit;
+        }
+    }
+    
+    class Edge{
+        int vertex;
+        int value;
+        boolean isReverse; 
+        Edge(int vertex, int value, boolean isReverse){
+            this.vertex = vertex;
+            this.value = value;
+            this.isReverse = isReverse;
+        }
+        
 
+    }
+    private List<Edge>[] tree;
+    private Map<Integer, Integer> trapIndex = new HashMap();
+    private boolean[][] visited; // [노드번호][bit];
     public int solution(int n, int start, int end, int[][] roads, int[] traps) {
         int answer = 0;
-
-        // 그래프 생성
-        List<Edge>[] graph = new ArrayList[n+1];
-
-        for(int i=1; i<=n; i++)
-            graph[i] = new ArrayList<>();
-
-        int len = roads.length;
-        for(int i=0; i<len; i++) {
-            int u = roads[i][0];
-            int v = roads[i][1];
-            int w = roads[i][2];
-            graph[u].add(new Edge(v,w,false));
-            graph[v].add(new Edge(u,w,true));
-        }
-
-        // 트랩 맵 생성
-        len = traps.length;
-        for(int i=0; i<len; i++)
-            trapMap.put(traps[i],i);
-
-        // dist 배열 생성
-        boolean dist[][] = new boolean[n+1][1<<10];
-
-        // 우선순위 큐에 시작 노드 삽입
-        PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
-        priorityQueue.add(new Node(start,0,0));
-
-        while(!priorityQueue.isEmpty()) {
-            // 처리되지 않은 노드 중 제일 비용이 적은 노드 선택
-            Node curNode = priorityQueue.poll();
-            int curv = curNode.vertex;
-            int curw = curNode.weight;
-            int curStatus = curNode.trapStatus;
-  
-            // 현재 노드가 도착 노드라면 정답 갱신. 도착 노드 이후로 더 볼 필요 X. 따라서 continue
-            if(curv == end) {
-             
-                answer = curw;
-                
+        init(n, roads, traps);
+        PriorityQueue<Node> pq = new PriorityQueue<Node>((a, b) -> {
+            return Integer.compare(a.value, b.value);
+        });
+        
+        pq.add(new Node(start, 0, 0));
+        
+        while(!pq.isEmpty()){
+            Node now = pq.poll();
+            
+            int vertex = now.vertex;
+            int value = now.value;
+            int trapBit = now.trapBit;
+   
+            if(vertex==end){
+                answer = value;
                 break;
             }
-
-            // 처리해야할 노드의 경로가 이미 저장된 경로보다 길면 continue
-            if(dist[curv][curStatus])
-                continue;
-            dist[curv][curStatus] = true;
-            // 현재 노드가 트랩이면 현재 상태 변화 (현재 트랩 켜주기)
-            if(trapMap.containsKey(curv))
-                curStatus ^= (1<<trapMap.get(curv));
-
-            // 인접 노드 탐색
-            for(Edge nextNode : graph[curv]) {
-                int nextv = nextNode.vertex;
-                int nextw = nextNode.weight;
-                boolean isReverseEdge = nextNode.isReverse;
-                // curv -> nextv가 역방형인 상태이고, 뒤집어진 간선일 떄 다음 노드 갈 수 있음
-                // curv -> nextv가 정방형인 상태이고, 뒤집어지지 않은 간선일 때 다음 노드 갈 수 있음
-                boolean isRight = checkIsRight(curv,nextv,curStatus);
-                if(isRight && isReverseEdge)
-                    continue;
-                else if(!isRight && !isReverseEdge)
-                    continue;
+            if(visited[vertex][trapBit]) continue;
+            visited[vertex][trapBit] = true;
+            
+            int flag = 0; // 방향 확인용
+            
+            // 현재 위치가 trap이라면 발동이 되었는지 확인
+            if(trapIndex.containsKey(vertex)){
+                int idx = trapIndex.get(vertex);
+                trapBit = (trapBit ^ (1<<idx));
                 
+                if((trapBit & (1<<idx))!=0) flag += 1;
+            }
+            
+            for(Edge next : tree[vertex]){
+                int nextFlag = flag;
+                // 다음 위치
+                if(trapIndex.containsKey(next.vertex)){
+                    int idx = trapIndex.get(next.vertex);
+                   
+                    if((trapBit & (1<<idx))!=0) nextFlag += 1;
+                }
                 
-                priorityQueue.add(new Node(nextv, nextw + curw, curStatus));
+                // 역방향 이고 flag == 1
+                if(next.isReverse && nextFlag==1 || 
+                   (!next.isReverse && (nextFlag==0 || nextFlag ==2)))
+                {
+                    pq.add(new Node(next.vertex, value + next.value, trapBit));
+                }
                 
             }
-
         }
+        
         return answer;
     }
-    // curv 에서 nextv가 정방형이면  true, 역방형이면 false
-    boolean checkIsRight(int curv, int nextv, int curStatus) {
-        // 둘 다 트랩이 아닌 경우 정방형
-        if(!trapMap.containsKey(curv) && !trapMap.containsKey(nextv))
-            return true;
-        // 둘 다 트랩인 경우
-        if(trapMap.containsKey(curv) && trapMap.containsKey(nextv)) {
-            int curvBit = 1 << trapMap.get(curv);
-            int nextvBit = 1 << trapMap.get(nextv);
-            boolean isCurvActive = (curStatus & curvBit) == curvBit;
-            boolean isNextvActice = (curStatus & nextvBit) == nextvBit;
-            // 하나만 활성 되어있는 경우 역방형 (두 값이 다른 경우)
-            // 둘 다 활성되어있거나 둘 다 비활성인 경우 정방형 (두 값이 같은 경우)
-            return isCurvActive == isNextvActice ? true : false;
+    private void init(int n, int[][] roads, int[] traps){
+        for(int i=0; i<traps.length; i++){
+            trapIndex.put(traps[i], i);
         }
-        // 하나만 트랩인 경우
-        // 활성되어있는 경우 역방형
-        // 활성되지 않은 경우 정방형
-        if(trapMap.containsKey(curv)) {
-            int curvBit = 1 << trapMap.get(curv);
-            boolean isCurvActive = (curStatus & curvBit) == curvBit;
-            return !isCurvActive;
+        visited = new boolean[n+1][1<<10];
+        
+        tree = new List[n+1];
+        for(int i=0; i<=n; i++){
+            tree[i] = new ArrayList();
         }
-        else if(trapMap.containsKey(nextv)) {
-            int nextvBit = 1 << trapMap.get(nextv);
-            boolean isNextvActice = (curStatus & nextvBit) == nextvBit;
-            return !isNextvActice;
+        
+        for(int[] road : roads){
+            int s = road[0];
+            int e = road[1];
+            int v = road[2];
+            
+            tree[s].add(new Edge(e,v,false));
+            tree[e].add(new Edge(s,v,true));
         }
-        return true;
     }
 }
