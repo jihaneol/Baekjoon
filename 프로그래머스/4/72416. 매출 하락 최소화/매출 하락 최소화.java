@@ -1,49 +1,54 @@
 import java.util.*;
 class Solution {
-    private List<Integer>[] tree;
     private int[][] dp;
+    private List<Integer>[] tree;
     public int solution(int[] sales, int[][] links) {
+        int answer = 0;
         int n = sales.length;
-        tree = new List[n+1];
+        
         dp = new int[n+1][2];
-        for(int i=1; i<=n; i++){
+        tree = new List[n+1];
+        
+        for(int i=0; i<=n; i++){
             tree[i] = new ArrayList();
         }
         
         for(int[] link : links){
             tree[link[0]].add(link[1]);
         }
-        dfs(sales, 1);
         
-        return Math.min(dp[1][0],dp[1][1]);
+        calcuSales(1, sales);
+
+        return Math.min(dp[1][0], dp[1][1]);
     }
-    private void dfs(int[] sales, int start){
-        boolean isLeaf = true;
+    
+    private void calcuSales(int curv, int[] sales){
+        dp[curv][1] = sales[curv-1];
         boolean noChild = true;
-        dp[start][1] = sales[start-1];
+        boolean isLeaf = true;
         
-        for(int next : tree[start]){
+        for(int nextv : tree[curv])
+        {
             isLeaf = false;
-            dfs(sales, next);
+            calcuSales(nextv, sales);
             
-            // 팀원을 하나라도 선택했다면
-            if(dp[next][1]<=dp[next][0]){
-                noChild = false;
-            }
+            if(dp[nextv][0] >= dp[nextv][1]) noChild = false;
             
-            dp[start][0] += Math.min(dp[next][0], dp[next][1]); 
-            dp[start][1] += Math.min(dp[next][0], dp[next][1]); // 팀장을 선택하니까. 자식의 부하들의 최소값을 더한다.
+            dp[curv][0] += Math.min(dp[nextv][0], dp[nextv][1]);
+            dp[curv][1] += Math.min(dp[nextv][0], dp[nextv][1]);
         }
         
         if(!isLeaf && noChild){
-            int min = Integer.MAX_VALUE;
-            for(int next : tree[start]){
-                if(min>dp[next][1] - dp[next][0]){
-                    min = dp[next][1] - dp[next][0];
-                }
+            int sum = Integer.MAX_VALUE;
+            
+            for(int nextv : tree[curv])
+            {
+                sum = Math.min(sum, dp[nextv][1] - dp[nextv][0]);
             }
-            dp[start][0] += min;
+            
+            dp[curv][0] += sum;
         }
-      
+
     }
+                                                                                                                                                                 
 }
